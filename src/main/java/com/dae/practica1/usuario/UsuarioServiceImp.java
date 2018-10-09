@@ -51,5 +51,12 @@ public class UsuarioServiceImp implements UsuarioService {
     public Usuario devuelveUsuario(String usuario) {
         return usuarios.get(usuario);
     }
+
+    @Override
+    public Map<String,Usuario> usuariosRegistrados() {
+        
+        return usuarios;
+        
+    }
     
 }

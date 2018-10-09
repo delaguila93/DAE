@@ -8,6 +8,7 @@ package com.dae.practica1.usuario;
 import com.dae.practica1.evento.Evento;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import org.springframework.stereotype.Component;
 
 
@@ -27,4 +28,6 @@ public interface UsuarioService {
     public List<Evento> ListaEventosCreados(String usuario);
     
     public Usuario devuelveUsuario(String usuario);
+    
+    public Map<String,Usuario> usuariosRegistrados();
 }
