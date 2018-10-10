@@ -20,16 +20,22 @@ import org.springframework.stereotype.Component;
 @Component
 public class UsuarioServiceImp implements UsuarioService {
 
-    Map<String,Usuario> usuarios;
+    private Map<String,Usuario> usuarios;
+    private int idUsuario = 0;
+    private int token;
     
     public UsuarioServiceImp(){
         usuarios = new TreeMap<>();
-        usuarios.put("yosiph", new Usuario("yosiph","yosiph","Jose",new Date()));
+        usuarios.put("yosiph", new Usuario(idUsuario++,"yosiph","yosiph","Jose",new Date()));
+        token = -1;
     }
     
     @Override
     public boolean RegistraUsuario(String usuario, String password, String nombre, Date fNac) {
-        return usuarios.put(usuario,new Usuario(usuario,nombre,password,fNac)) != null;
+        if(usuarios.get(usuario) != null){
+            return false;
+        }
+        return usuarios.put(usuario,new Usuario(idUsuario++,usuario,nombre,password,fNac)) == null;
     }
 
     @Override
