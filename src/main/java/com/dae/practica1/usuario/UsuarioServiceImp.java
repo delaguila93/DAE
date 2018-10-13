@@ -29,7 +29,9 @@ public class UsuarioServiceImp implements UsuarioService {
     
     @Override
     public boolean RegistraUsuario(String usuario, String password, String nombre, Date fNac) {
-        return usuarios.put(usuario,new Usuario(usuario,nombre,password,fNac)) != null;
+        Usuario aux=new Usuario(usuario,nombre,password,fNac);
+        Usuario puti=usuarios.put(usuario,aux);
+        return puti != null;
     }
 
     @Override
