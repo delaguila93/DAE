@@ -117,6 +117,30 @@ public class Cliente {
         }
     }
 
+    public void crearEvento(EventoService servicioEvento) throws ParseException {
+        Scanner scanner = new Scanner(System.in);
+        DateFormat format = new SimpleDateFormat("DD/MM/YYYY");
+
+        System.out.print("Introduce un nombre de usuario: ");
+        String usuario = scanner.nextLine();
+
+        System.out.print("Introduce una contraseña: ");
+        String password = scanner.nextLine();
+
+        System.out.print("Introduce un nombre: ");
+        String nombre = scanner.nextLine();
+
+        System.out.print("Introduce tu fecha de nacimiento formato DD/MM/YYYY: ");
+        String fecha = scanner.nextLine();
+        Date fechaNac = format.parse(fecha);
+
+    }
+
+  
+
+    
+    
+
     public void run() throws ParseException {
         Scanner scanner = new Scanner(System.in);
         int opcion = -1;
