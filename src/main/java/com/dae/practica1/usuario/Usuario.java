@@ -16,12 +16,13 @@ import java.util.List;
  */
 public class Usuario {
 
+    private int idUsuario;
     private String usuario, nombre, password;
     private Date fNac;
     private List<Evento> eventosInscritos, eventosCreados;
 
     public Usuario() {
-
+        this.idUsuario = -1;
         this.usuario = "";
         this.nombre = "";
         this.password = "";
@@ -30,14 +31,29 @@ public class Usuario {
         eventosCreados = new ArrayList<>();
     }
 
-    public Usuario(String usuario, String nombre, String password, Date fNac) {
+    public Usuario(int idUsuario, String usuario, String nombre, String password, Date fNac) {
 
+        this.idUsuario = idUsuario;
         this.usuario = usuario;
         this.nombre = nombre;
         this.password = password;
         this.fNac = fNac;
         eventosInscritos = new ArrayList<>();
         eventosCreados = new ArrayList<>();
+    }
+
+    /**
+     * @return the idUsuario
+     */
+    public int getIdUsuario() {
+        return idUsuario;
+    }
+
+    /**
+     * @param idUsuario the idUsuario to set
+     */
+    public void setIdUsuario(int idUsuario) {
+        this.idUsuario = idUsuario;
     }
 
     public String getUsuario() {
@@ -86,10 +102,10 @@ public class Usuario {
         this.eventosInscritos = eventosInscritos;
     }
 
-    public void anadirEventoInscrito(Evento e){
+    public void anadirEventoInscrito(Evento e) {
         eventosInscritos.add(e);
     }
-    
+
     /**
      * @return the eventosCreados
      */

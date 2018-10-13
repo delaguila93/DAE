@@ -19,7 +19,7 @@ public interface EventoService {
     
     public List<Evento> BuscaEvento(String busqueda);
     
-    public boolean CreaEvento(String titulo, String lugar, Date fecha, String tipo, String decripcion, int aforo);
+    public boolean CreaEvento(String titulo, String lugar, Date fecha, String tipo, String decripcion, int aforo,Usuario usuario);
     
     public boolean BorraEvento(String titulo);
     
