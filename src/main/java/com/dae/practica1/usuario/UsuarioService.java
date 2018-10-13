@@ -21,7 +21,7 @@ public interface UsuarioService {
     
     public boolean RegistraUsuario(String usuario, String password, String nombre, Date fNac);
     
-    public void IdentificaUsuario(String usuario, String password);
+    public int IdentificaUsuario(String usuario, String password);
     
     public List<Evento> ListaEventosInscritos(String usuario);
     
