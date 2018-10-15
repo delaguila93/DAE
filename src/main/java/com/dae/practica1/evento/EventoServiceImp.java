@@ -26,7 +26,7 @@ public class EventoServiceImp implements EventoService {
         eventos = new TreeMap<>();
         eventos.put("Micasa", new Evento(idEvento++, "Micasa", "Andujar", "Charla", "Hambre mucha hambre", new Date(), 1));
         tiposEvento = new ArrayList<>(4);
-        for(int i=0;i<4;++i){
+        for (int i = 0; i < 4; ++i) {
             tiposEvento.add(new ArrayList<>());
         }
         tiposEvento.get(0).add("Micasa");
@@ -53,8 +53,8 @@ public class EventoServiceImp implements EventoService {
                 return null;
 
         }
-        
-        for(int i=0;i<tiposEvento.get(posTipo).size();++i){
+
+        for (int i = 0; i < tiposEvento.get(posTipo).size(); ++i) {
             resultadoBusqueda.add(eventos.get(tiposEvento.get(posTipo).get(i)));
         }
 
@@ -69,18 +69,18 @@ public class EventoServiceImp implements EventoService {
             eventos.put(titulo, new Evento(idEvento++, titulo, lugar, tipo, descripcion, fecha, aforo));
             eventos.get(titulo).inscribirUsuario(usuario);
             switch (tipo) {
-            case "Charla":
-               tiposEvento.get(0).add(titulo);
-                break;
-            case "Curso":
-                tiposEvento.get(1).add(titulo);
-                break;
-            case "Actividad deportiva":
-                tiposEvento.get(2).add(titulo);
-                break;
-            case "Visita cultutal":
-               tiposEvento.get(3).add(titulo);
-                break;
+                case "Charla":
+                    tiposEvento.get(0).add(titulo);
+                    break;
+                case "Curso":
+                    tiposEvento.get(1).add(titulo);
+                    break;
+                case "Actividad deportiva":
+                    tiposEvento.get(2).add(titulo);
+                    break;
+                case "Visita cultutal":
+                    tiposEvento.get(3).add(titulo);
+                    break;
             }
             return true;
         }
@@ -89,21 +89,44 @@ public class EventoServiceImp implements EventoService {
 
     @Override
     public boolean BorraEvento(String titulo) {
+        switch (eventos.get(titulo).getTipo()) {
+
+            case "Charla":
+                tiposEvento.get(0).remove(titulo);
+                break;
+            case "Curso":
+                tiposEvento.get(1).remove(titulo);
+                break;
+            case "Actividad deportiva":
+                tiposEvento.get(2).remove(titulo);
+                break;
+            case "Visita cultutal":
+                tiposEvento.get(3).remove(titulo);
+                break;
+        }
+
         return eventos.remove(titulo, eventos.get(titulo));
     }
 
     @Override
-    public void InscribeUsuario(Usuario usuario, String titulo) {
+    public boolean InscribeUsuario(Usuario usuario, String titulo) {
         if (eventos.get(titulo).getAforo() == eventos.get(titulo).tamListaInscritos()) {
             eventos.get(titulo).anadirListaEspera(usuario);
+            return false;
         }
         eventos.get(titulo).inscribirUsuario(usuario);
+        return true;
 
     }
 
     @Override
-    public boolean CancelaUsuario(Usuario usuario, String titulo) {
-        return eventos.get(titulo).borraUsusario(usuario);
+    public void CancelaUsuario(Usuario usuario, String titulo) {
+        eventos.get(titulo).borraUsusario(usuario);
+    }
+
+    @Override
+    public Map<String, Evento> eventosCreados() {
+        return eventos;
     }
 
 }

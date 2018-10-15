@@ -146,15 +146,16 @@ public class Evento {
 
     public void inscribirUsuario(Usuario usuario) {
         usuariosInscritos.add(usuario);
-        for(Usuario u:usuariosInscritos){
-            if(u.getUsuario() == null ? usuario.getUsuario() == null : u.getUsuario().equals(usuario.getUsuario())){
+        for (Usuario u : usuariosInscritos) {
+            if (u.getUsuario() == null ? usuario.getUsuario() == null : u.getUsuario().equals(usuario.getUsuario())) {
                 u.anadirEventoInscrito(this);
             }
         }
     }
 
-    public void anadirListaEspera(Usuario ususario) {
-        listaEspera.addLast(ususario);
+    public void anadirListaEspera(Usuario usuario) {
+        listaEspera.addLast(usuario);
+        usuario.anadirEnEspera(this);
     }
 
     /**
@@ -175,8 +176,13 @@ public class Evento {
         return usuariosInscritos.size();
     }
 
-    public boolean borraUsusario(Usuario usuario) {
-        return usuariosInscritos.remove(usuario);    
+    public void borraUsusario(Usuario usuario) {
+        usuariosInscritos.remove(usuario);
+        if (listaEspera.size() > 0) {
+            usuariosInscritos.add(listaEspera.pollFirst());
+        }
+        usuariosInscritos.get(usuariosInscritos.size()-1).anadirEventoInscrito(this);
+        usuariosInscritos.get(usuariosInscritos.size()-1).quitarEspera(this);
     }
 
     /**

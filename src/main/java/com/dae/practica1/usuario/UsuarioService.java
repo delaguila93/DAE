@@ -30,4 +30,8 @@ public interface UsuarioService {
     public Usuario devuelveUsuario(String usuario);
     
     public Map<String,Usuario> usuariosRegistrados();
+    
+    public List<Evento> ListaEventosEnEspera(String usuario);
+    
+    
 }

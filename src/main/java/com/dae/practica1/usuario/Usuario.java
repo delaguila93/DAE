@@ -19,7 +19,7 @@ public class Usuario {
     private int idUsuario;
     private String usuario, nombre, password;
     private Date fNac;
-    private List<Evento> eventosInscritos, eventosCreados;
+    private List<Evento> eventosInscritos, eventosCreados, eventosEsperando;
 
     public Usuario() {
         this.idUsuario = -1;
@@ -29,6 +29,7 @@ public class Usuario {
         this.fNac = null;
         eventosInscritos = new ArrayList<>();
         eventosCreados = new ArrayList<>();
+        eventosEsperando = new ArrayList<>();
     }
 
     public Usuario(int idUsuario, String usuario, String nombre, String password, Date fNac) {
@@ -40,6 +41,7 @@ public class Usuario {
         this.fNac = fNac;
         eventosInscritos = new ArrayList<>();
         eventosCreados = new ArrayList<>();
+        eventosEsperando = new ArrayList<>();
     }
 
     /**
@@ -104,6 +106,21 @@ public class Usuario {
 
     public void anadirEventoInscrito(Evento e) {
         eventosInscritos.add(e);
+    }
+
+    /**
+     * @return the eventosEsperando
+     */
+    public List<Evento> getEventosEsperando() {
+        return eventosEsperando;
+    }
+
+    public void anadirEnEspera(Evento e) {
+        eventosEsperando.add(e);
+    }
+    
+    public void quitarEspera(Evento e){
+        eventosEsperando.remove(e);
     }
 
     /**

@@ -34,8 +34,8 @@ public class UsuarioServiceImp implements UsuarioService {
     public boolean RegistraUsuario(String usuario, String password, String nombre, Date fNac) {
 
         Usuario aux = new Usuario(idUsuario++, usuario, nombre, password, fNac);
-        Usuario puti = usuarios.put(usuario, aux);
-        return puti != null;
+        Usuario anadido = usuarios.put(usuario, aux);
+        return anadido != null;
     }
 
     @Override
@@ -67,9 +67,12 @@ public class UsuarioServiceImp implements UsuarioService {
 
     @Override
     public Map<String, Usuario> usuariosRegistrados() {
-
         return usuarios;
+    }
 
+    @Override
+    public List<Evento> ListaEventosEnEspera(String usuario) {
+        return usuarios.get(usuario).getEventosEsperando();
     }
 
 }

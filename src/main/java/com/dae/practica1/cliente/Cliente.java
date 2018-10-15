@@ -117,29 +117,102 @@ public class Cliente {
         }
     }
 
-    public void crearEvento(EventoService servicioEvento) throws ParseException {
+    public void cancelaEvento(UsuarioService servicioUsuario, String usuario, EventoService servicioEvento) {
+        Usuario usu = servicioUsuario.devuelveUsuario(usuario);
         Scanner scanner = new Scanner(System.in);
-        DateFormat format = new SimpleDateFormat("DD/MM/YYYY");
+        String titulo;
 
-        System.out.print("Introduce un nombre de usuario: ");
-        String usuario = scanner.nextLine();
+        for (Evento e : usu.getEventosCreados()) {
+            System.out.println("Nombre de evento: " + e.getTitulo());
+            System.out.println("Descripcion: " + e.getDescripcion());
+            System.out.println("Fecha del evento: " + e.getLugar());
+            System.out.println("Tipo de evento" + e.getTipo());
+        }
 
-        System.out.print("Introduce una contraseña: ");
-        String password = scanner.nextLine();
+        System.out.print("Introduce el nombre del evento que vas a cancelar: ");
+        titulo = scanner.nextLine();
+        if (servicioEvento.BorraEvento(titulo)) {
+            System.out.println("Evento borrado correctamente");
 
-        System.out.print("Introduce un nombre: ");
-        String nombre = scanner.nextLine();
-
-        System.out.print("Introduce tu fecha de nacimiento formato DD/MM/YYYY: ");
-        String fecha = scanner.nextLine();
-        Date fechaNac = format.parse(fecha);
+        } else {
+            System.out.println("Fallo a la hora de borrar el evento");
+        }
 
     }
 
-  
+    public void inscribirUsuario(EventoService servicioEvento, String usuario, UsuarioService servicioUsuario) {
+        Scanner scanner = new Scanner(System.in);
+        String titulo;
 
-    
-    
+        for (Map.Entry<String, Evento> salida : servicioEvento.eventosCreados().entrySet()) {
+            System.out.println("------");
+            System.out.println("Nombre de ususario: " + salida.getValue().getTitulo());
+            System.out.println("Nombre: " + salida.getValue().getDescripcion());
+            System.out.println("Fecha del evento: " + salida.getValue().getFecha().toString());
+            System.out.println("Tipo de evento: " + salida.getValue().getTipo());
+        }
+
+        System.out.print("Introduce el titulo del evento: ");
+        titulo = scanner.nextLine();
+
+        if (servicioEvento.InscribeUsuario(servicioUsuario.devuelveUsuario(usuario), titulo)) {
+            System.out.println("Usuario inscrito en el evento");
+        } else {
+            System.out.println("Usuario añadido a la lista de espera");
+        }
+    }
+
+    public void cancelarInscripcion(EventoService servicioEvento, UsuarioService servicioUsuario, String usuario) {
+        Scanner scanner = new Scanner(System.in);
+        String titulo;
+
+        for (Evento e : servicioUsuario.ListaEventosInscritos(usuario)) {
+            System.out.println("------");
+            System.out.println("Nombre de usuario: " + e.getTitulo());
+            System.out.println("Nombre: " + e.getDescripcion());
+            System.out.println("Fecha del evento: " + e.getFecha().toString());
+            System.out.println("Tipo de evento: " + e.getTipo());
+        }
+
+        System.out.print("Introduce el titulo del evento: ");
+        titulo = scanner.nextLine();
+
+        servicioEvento.CancelaUsuario(servicioUsuario.devuelveUsuario(usuario), titulo);
+        System.out.println("Inscripcion cancelada al evento.");
+
+    }
+
+    public void listarEventosCreados(UsuarioService servicioUsuario, String usuario) {
+        for (Evento e : servicioUsuario.ListaEventosCreados(usuario)) {
+            System.out.println("------");
+            System.out.println("Nombre de usuario: " + e.getTitulo());
+            System.out.println("Nombre: " + e.getDescripcion());
+            System.out.println("Fecha del evento: " + e.getFecha().toString());
+            System.out.println("Tipo de evento: " + e.getTipo());
+        }
+    }
+
+    public void listarEventosInscritos(UsuarioService servicioUsuario, String usuario) {
+        System.out.println("--Eventos en los que estas inscrito--");
+
+        for (Evento e : servicioUsuario.ListaEventosInscritos(usuario)) {
+            System.out.println("------");
+            System.out.println("Nombre de usuario: " + e.getTitulo());
+            System.out.println("Nombre: " + e.getDescripcion());
+            System.out.println("Fecha del evento: " + e.getFecha().toString());
+            System.out.println("Tipo de evento: " + e.getTipo());
+        }
+
+        System.out.println("--Eventos en los que estas en lista de espera--");
+
+        for (Evento e : servicioUsuario.ListaEventosEnEspera(usuario)) {
+            System.out.println("------");
+            System.out.println("Nombre de usuario: " + e.getTitulo());
+            System.out.println("Nombre: " + e.getDescripcion());
+            System.out.println("Fecha del evento: " + e.getFecha().toString());
+            System.out.println("Tipo de evento: " + e.getTipo());
+        }
+    }
 
     public void run() throws ParseException {
         Scanner scanner = new Scanner(System.in);
@@ -155,12 +228,16 @@ public class Cliente {
             System.out.println("3.- Mostrar ususarios registrados");
             System.out.println("4.- Buscar eventos(tipo)");
             System.out.println("5.- Crear evento");
+            System.out.println("6.- Cancelar evento");
+            System.out.println("7.- Inscribirse a un evento");
+            System.out.println("8.- Cancelar inscripcion a un evento");
 
+            System.out.print("Introduce una opcion: ");
             opcion = scanner.nextInt();
 
+            String usuario = "yosiph", password = "Jose";
             switch (opcion) {
                 case 1: {
-                    String usuario = "yosiph", password = "Jose";
 
 //                    System.out.print("Introduce usuario:");
 //                    usuario = scanner.nextLine();
@@ -180,11 +257,13 @@ public class Cliente {
                     buscarEvento(servicioEvento);
                     break;
                 case 5: {
-                    String usuario="yosiph";
+
                     crearEvento(servicioEvento, servicioUsuario.devuelveUsuario(usuario));
                 }
                 break;
-
+                case 6:
+                    cancelaEvento(servicioUsuario, usuario, servicioEvento);
+                    break;
             }
 
         } while (opcion != 0);

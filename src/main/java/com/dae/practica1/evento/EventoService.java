@@ -8,6 +8,7 @@ package com.dae.practica1.evento;
 import com.dae.practica1.usuario.Usuario;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import org.springframework.stereotype.Component;
 
 /**
@@ -23,10 +24,11 @@ public interface EventoService {
     
     public boolean BorraEvento(String titulo);
     
-    public void InscribeUsuario(Usuario usuario,String titulo);//No es string es un objeto Usuario para el usuario, lo mismo para Evento
+    public boolean InscribeUsuario(Usuario usuario,String titulo);//No es string es un objeto Usuario para el usuario, lo mismo para Evento
     
-    public boolean CancelaUsuario(Usuario usuario,String titulo);//No es string es un objeto Usuario para el usuario, lo mismo para Evento
+    public void CancelaUsuario(Usuario usuario,String titulo);//No es string es un objeto Usuario para el usuario, lo mismo para Evento
     
+    public Map<String,Evento> eventosCreados();
     
     
 }
