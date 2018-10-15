@@ -25,7 +25,7 @@ public interface EventoService {
     
     public boolean InscribeUsuario(Usuario usuario,String titulo);//No es string es un objeto Usuario para el usuario, lo mismo para Evento
     
-    public void CancelaUsuario(Usuario usuario,String titulo,int token);//No es string es un objeto Usuario para el usuario, lo mismo para Evento
+    public void CancelaUsuario(String titulo,int token);//No es string es un objeto Usuario para el usuario, lo mismo para Evento
     
     public Map<String,Evento> eventosCreados();
     

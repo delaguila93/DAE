@@ -166,16 +166,16 @@ public class Cliente {
 
         for (Evento e : servicioUsuario.ListaEventosInscritos(usuario, token)) {
             System.out.println("------");
-            System.out.println("Nombre de usuario: " + e.getTitulo());
-            System.out.println("Nombre: " + e.getDescripcion());
-            System.out.println("Fecha del evento: " + e.getFecha().toString());
+            System.out.println("Titulo evento: " + e.getTitulo());
+            System.out.println("descripcion: " + e.getDescripcion());
+            System.out.println("Fecha: " + e.getFecha().toString());
             System.out.println("Tipo de evento: " + e.getTipo());
         }
 
         System.out.print("Introduce el titulo del evento: ");
         titulo = scanner.nextLine();
 
-        servicioEvento.CancelaUsuario(servicioUsuario.devuelveUsuario(usuario), titulo, token);
+        servicioEvento.CancelaUsuario(titulo, token);
         System.out.println("Inscripcion cancelada al evento.");
 
     }
@@ -183,9 +183,9 @@ public class Cliente {
     public void listarEventosCreados(UsuarioService servicioUsuario, String usuario) {
         for (Evento e : servicioUsuario.ListaEventosCreados(usuario, token)) {
             System.out.println("------");
-            System.out.println("Nombre de usuario: " + e.getTitulo());
-            System.out.println("Nombre: " + e.getDescripcion());
-            System.out.println("Fecha del evento: " + e.getFecha().toString());
+            System.out.println("Titulo evento: " + e.getTitulo());
+            System.out.println("descripcion: " + e.getDescripcion());
+            System.out.println("Fecha: " + e.getFecha().toString());
             System.out.println("Tipo de evento: " + e.getTipo());
         }
     }
@@ -195,9 +195,9 @@ public class Cliente {
 
         for (Evento e : servicioUsuario.ListaEventosInscritos(usuario, token)) {
             System.out.println("------");
-            System.out.println("Nombre de usuario: " + e.getTitulo());
-            System.out.println("Nombre: " + e.getDescripcion());
-            System.out.println("Fecha del evento: " + e.getFecha().toString());
+            System.out.println("Titulo evento: " + e.getTitulo());
+            System.out.println("descripcion: " + e.getDescripcion());
+            System.out.println("Fecha: " + e.getFecha().toString());
             System.out.println("Tipo de evento: " + e.getTipo());
         }
 
@@ -205,9 +205,9 @@ public class Cliente {
 
         for (Evento e : servicioUsuario.ListaEventosEnEspera(usuario, token)) {
             System.out.println("------");
-            System.out.println("Nombre de usuario: " + e.getTitulo());
-            System.out.println("Nombre: " + e.getDescripcion());
-            System.out.println("Fecha del evento: " + e.getFecha().toString());
+            System.out.println("Titulo evento: " + e.getTitulo());
+            System.out.println("descripcion: " + e.getDescripcion());
+            System.out.println("Fecha: " + e.getFecha().toString());
             System.out.println("Tipo de evento: " + e.getTipo());
         }
     }
@@ -217,6 +217,9 @@ public class Cliente {
         int opcion = -1;
         UsuarioService servicioUsuario = (UsuarioService) context.getBean("usuarioServiceImp");
         EventoService servicioEvento = (EventoService) context.getBean("eventoServiceImp");
+        
+
+        
         do {
             System.out.println("--------- Menu ----------");
             System.out.println("Introduce una opcion: ");
@@ -261,6 +264,9 @@ public class Cliente {
                     break;
                 case 6:
                     inscribirUsuario(servicioEvento, token, servicioUsuario);
+                    break;
+                case 7:
+                    cancelarInscripcion(servicioEvento, servicioUsuario, usuario);
                     break;
             }
 

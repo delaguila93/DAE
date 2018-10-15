@@ -36,6 +36,7 @@ public class EventoServiceImp implements EventoService {
         }
         tiposEvento.get(0).add("Micasa");
 
+        
     }
 
     @Override
@@ -63,7 +64,6 @@ public class EventoServiceImp implements EventoService {
         for (int i = 0; i < tiposEvento.get(posTipo).size(); ++i) {
             resultadoBusqueda.add(eventos.get(tiposEvento.get(posTipo).get(i)));
         }
-
         return resultadoBusqueda;
     }
 
@@ -134,9 +134,9 @@ public class EventoServiceImp implements EventoService {
     }
 
     @Override
-    public void CancelaUsuario(Usuario usuario, String titulo, int token) {
+    public void CancelaUsuario( String titulo, int token) {
         if (usuarios.comprobarToken(token)) {
-            eventos.get(titulo).borraUsusario(usuario);
+            eventos.get(titulo).borraUsusario(usuarios.devuelveUsuario(token));
         }
     }
 
