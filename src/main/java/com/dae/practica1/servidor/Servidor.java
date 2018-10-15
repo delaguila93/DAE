@@ -2,10 +2,10 @@ package com.dae.practica1.servidor;
 
 
 import com.dae.practica1.cliente.Cliente;
-import com.dae.practica1.evento.EventoService;
-import com.dae.practica1.evento.EventoServiceImp;
-import com.dae.practica1.usuario.UsuarioService;
-import com.dae.practica1.usuario.UsuarioServiceImp;
+import com.dae.practica1.servicios.EventoService;
+import com.dae.practica1.servicios.EventoServiceImp;
+import com.dae.practica1.servicios.UsuarioService;
+import com.dae.practica1.servicios.UsuarioServiceImp;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;

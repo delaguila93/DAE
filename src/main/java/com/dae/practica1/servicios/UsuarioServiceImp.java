@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.dae.practica1.usuario;
+package com.dae.practica1.servicios;
 
-import com.dae.practica1.evento.Evento;
+import com.dae.practica1.servicios.Evento;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +26,7 @@ public class UsuarioServiceImp implements UsuarioService {
     public UsuarioServiceImp() {
         usuarios = new TreeMap<>();
         identificados = new TreeMap<>();
-        usuarios.put("yosiph", new Usuario(idUsuario++, "yosiph", "yosiph", "Jose", new Date()));
+        usuarios.put("yosiph", new Usuario(++idUsuario, "yosiph", "yosiph", "Jose", new Date()));
         identificados.put(idUsuario, "yosiph");
 
     }
@@ -34,7 +34,7 @@ public class UsuarioServiceImp implements UsuarioService {
     @Override
     public boolean RegistraUsuario(String usuario, String password, String nombre, Date fNac) {
 
-        Usuario aux = new Usuario(idUsuario++, usuario, nombre, password, fNac);
+        Usuario aux = new Usuario(++idUsuario, usuario, nombre, password, fNac);
         Usuario anadido = usuarios.put(usuario, aux);
 
         return anadido != null;
@@ -73,10 +73,7 @@ public class UsuarioServiceImp implements UsuarioService {
         return usuarios.get(usuario);
     }
 
-    @Override
-    public Map<String, Usuario> usuariosRegistrados() {
-        return usuarios;
-    }
+
 
     @Override
     public List<Evento> ListaEventosEnEspera(String usuario, int token) {

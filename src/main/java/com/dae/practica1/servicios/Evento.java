@@ -3,9 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.dae.practica1.evento;
+package com.dae.practica1.servicios;
 
-import com.dae.practica1.usuario.Usuario;
 import java.util.*;
 
 /**

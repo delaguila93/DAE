@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.dae.practica1.evento;
+package com.dae.practica1.servicios;
 
-import com.dae.practica1.usuario.Usuario;
-import com.dae.practica1.usuario.UsuarioService;
 import java.util.Date;
 import java.util.List;
 import java.util.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 /**
@@ -22,6 +22,10 @@ public class EventoServiceImp implements EventoService {
     private Map<String, Evento> eventos;
     private List<List<String>> tiposEvento;//pos 0= charla, pos 1 =curso,pos 2= actividad deportiva, pos 3=visita cultiral.
     private int idEvento = 0;
+    
+    @Autowired
+    @Qualifier("UsuarioService")
+    private UsuarioService usuarios;
 
     public EventoServiceImp() {
         eventos = new TreeMap<>();
@@ -64,7 +68,7 @@ public class EventoServiceImp implements EventoService {
     }
 
     @Override
-    public boolean CreaEvento(String titulo, String lugar, Date fecha, String tipo, String descripcion, int aforo, int token, UsuarioService usuarios) {
+    public boolean CreaEvento(String titulo, String lugar, Date fecha, String tipo, String descripcion, int aforo, int token) {
         if (usuarios.comprobarToken(token)) {
             if (eventos.get(titulo) != null) {
                 return false;
@@ -94,7 +98,7 @@ public class EventoServiceImp implements EventoService {
     }
 
     @Override
-    public boolean BorraEvento(String titulo, int token, UsuarioService usuarios) {
+    public boolean BorraEvento(String titulo, int token) {
 
         if (usuarios.comprobarToken(token)) {
             switch (eventos.get(titulo).getTipo()) {
@@ -130,7 +134,7 @@ public class EventoServiceImp implements EventoService {
     }
 
     @Override
-    public void CancelaUsuario(Usuario usuario, String titulo, UsuarioService usuarios, int token) {
+    public void CancelaUsuario(Usuario usuario, String titulo, int token) {
         if (usuarios.comprobarToken(token)) {
             eventos.get(titulo).borraUsusario(usuario);
         }

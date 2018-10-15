@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.dae.practica1.usuario;
+package com.dae.practica1.servicios;
 
-import com.dae.practica1.evento.Evento;
+import com.dae.practica1.servicios.Evento;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -28,8 +28,6 @@ public interface UsuarioService {
     public List<Evento> ListaEventosCreados(String usuario, int token );
     
     public Usuario devuelveUsuario(String usuario);
-    
-    public Map<String,Usuario> usuariosRegistrados();
     
     public List<Evento> ListaEventosEnEspera(String usuario,int token);
     
