@@ -6,6 +6,7 @@
 package com.dae.practica1.evento;
 
 import com.dae.practica1.usuario.Usuario;
+import com.dae.practica1.usuario.UsuarioService;
 import java.util.Date;
 import java.util.List;
 import java.util.*;
@@ -30,6 +31,7 @@ public class EventoServiceImp implements EventoService {
             tiposEvento.add(new ArrayList<>());
         }
         tiposEvento.get(0).add("Micasa");
+
     }
 
     @Override
@@ -62,50 +64,58 @@ public class EventoServiceImp implements EventoService {
     }
 
     @Override
-    public boolean CreaEvento(String titulo, String lugar, Date fecha, String tipo, String descripcion, int aforo, Usuario usuario) {
-        if (eventos.get(titulo) != null) {
-            return false;
-        } else {
-            eventos.put(titulo, new Evento(idEvento++, titulo, lugar, tipo, descripcion, fecha, aforo));
-            eventos.get(titulo).inscribirUsuario(usuario);
-            switch (tipo) {
-                case "Charla":
-                    tiposEvento.get(0).add(titulo);
-                    break;
-                case "Curso":
-                    tiposEvento.get(1).add(titulo);
-                    break;
-                case "Actividad deportiva":
-                    tiposEvento.get(2).add(titulo);
-                    break;
-                case "Visita cultutal":
-                    tiposEvento.get(3).add(titulo);
-                    break;
+    public boolean CreaEvento(String titulo, String lugar, Date fecha, String tipo, String descripcion, int aforo, int token, UsuarioService usuarios) {
+        if (usuarios.comprobarToken(token)) {
+            if (eventos.get(titulo) != null) {
+                return false;
+            } else {
+                eventos.put(titulo, new Evento(idEvento++, titulo, lugar, tipo, descripcion, fecha, aforo));
+                eventos.get(titulo).inscribirUsuario(usuarios.devuelveUsuario(token));
+                switch (tipo) {
+                    case "Charla":
+                        tiposEvento.get(0).add(titulo);
+                        break;
+                    case "Curso":
+                        tiposEvento.get(1).add(titulo);
+                        break;
+                    case "Actividad deportiva":
+                        tiposEvento.get(2).add(titulo);
+                        break;
+                    case "Visita cultutal":
+                        tiposEvento.get(3).add(titulo);
+                        break;
+                }
+                return true;
             }
-            return true;
+
         }
+        return false;
 
     }
 
     @Override
-    public boolean BorraEvento(String titulo) {
-        switch (eventos.get(titulo).getTipo()) {
+    public boolean BorraEvento(String titulo, int token, UsuarioService usuarios) {
 
-            case "Charla":
-                tiposEvento.get(0).remove(titulo);
-                break;
-            case "Curso":
-                tiposEvento.get(1).remove(titulo);
-                break;
-            case "Actividad deportiva":
-                tiposEvento.get(2).remove(titulo);
-                break;
-            case "Visita cultutal":
-                tiposEvento.get(3).remove(titulo);
-                break;
+        if (usuarios.comprobarToken(token)) {
+            switch (eventos.get(titulo).getTipo()) {
+
+                case "Charla":
+                    tiposEvento.get(0).remove(titulo);
+                    break;
+                case "Curso":
+                    tiposEvento.get(1).remove(titulo);
+                    break;
+                case "Actividad deportiva":
+                    tiposEvento.get(2).remove(titulo);
+                    break;
+                case "Visita cultutal":
+                    tiposEvento.get(3).remove(titulo);
+                    break;
+            }
+
+            return eventos.remove(titulo, eventos.get(titulo));
         }
-
-        return eventos.remove(titulo, eventos.get(titulo));
+        return false;
     }
 
     @Override
@@ -120,8 +130,10 @@ public class EventoServiceImp implements EventoService {
     }
 
     @Override
-    public void CancelaUsuario(Usuario usuario, String titulo) {
-        eventos.get(titulo).borraUsusario(usuario);
+    public void CancelaUsuario(Usuario usuario, String titulo, UsuarioService usuarios, int token) {
+        if (usuarios.comprobarToken(token)) {
+            eventos.get(titulo).borraUsusario(usuario);
+        }
     }
 
     @Override

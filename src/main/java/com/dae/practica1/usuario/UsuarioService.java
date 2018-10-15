@@ -23,15 +23,18 @@ public interface UsuarioService {
     
     public int IdentificaUsuario(String usuario, String password);
     
-    public List<Evento> ListaEventosInscritos(String usuario);
+    public List<Evento> ListaEventosInscritos(String usuario, int token);
     
-    public List<Evento> ListaEventosCreados(String usuario);
+    public List<Evento> ListaEventosCreados(String usuario, int token );
     
     public Usuario devuelveUsuario(String usuario);
     
     public Map<String,Usuario> usuariosRegistrados();
     
-    public List<Evento> ListaEventosEnEspera(String usuario);
+    public List<Evento> ListaEventosEnEspera(String usuario,int token);
     
+    public boolean comprobarToken(int token);
+    
+    public Usuario devuelveUsuario(int token);
     
 }
