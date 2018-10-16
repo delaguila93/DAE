@@ -90,7 +90,7 @@ public class Cliente {
 
     public void buscarEvento(EventoService servicioEvento) {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Introduce el tipo de evento: ");
+        System.out.print("Introduce lo que deseas buscar: ");
         String tipo = scanner.nextLine();
 
         List<Evento> resultado = servicioEvento.BuscaEvento(tipo);
@@ -98,6 +98,8 @@ public class Cliente {
             System.out.println("***********");
             System.out.println("Título del evento: " + e.getTitulo());
             System.out.println("Día:" + e.getFecha().toString());
+            System.out.println("Tipo: "+e.getTipo());
+            System.out.println("Descripcion: "+e.getDescripcion());
             System.out.println("Aforo restante: " + (e.getAforo() - e.getUsuariosInscritos().size()));
             System.out.println("***********");
         }
@@ -231,7 +233,9 @@ public class Cliente {
                 System.out.println("4.- Crear evento");
                 System.out.println("5.- Cancelar evento");
                 System.out.println("6.- Inscribirse a un evento");
-                System.out.println("7.- Cancelar inscripcion a un evento");
+                System.out.println("7.- Cancelar inscripcion a un evento");                
+                System.out.println("8.- Mostras eventos creados");
+                System.out.println("9.- mostrar eventos inscritos");
             }
 
             System.out.print("Introduce una opcion: ");
@@ -270,6 +274,9 @@ public class Cliente {
                     break;
                 case 8:
                     listarEventosCreados(servicioUsuario, usuario);
+                    break;
+                case 9:
+                    listarEventosInscritos(servicioUsuario, usuario);
                     break;
             }
 

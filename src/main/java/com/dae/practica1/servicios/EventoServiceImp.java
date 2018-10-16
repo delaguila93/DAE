@@ -22,7 +22,7 @@ public class EventoServiceImp implements EventoService {
     private Map<String, Evento> eventos;
     private List<List<String>> tiposEvento;//pos 0= charla, pos 1 =curso,pos 2= actividad deportiva, pos 3=visita cultiral.
     private int idEvento = 0;
-    
+
     @Autowired
     @Qualifier("UsuarioService")
     private UsuarioService usuarios;
@@ -36,14 +36,13 @@ public class EventoServiceImp implements EventoService {
         }
         tiposEvento.get(0).add("Micasa");
 
-        
     }
 
     @Override
-    public List<Evento> BuscaEvento(String tipo) {
+    public List<Evento> BuscaEvento(String cadena) {
         List<Evento> resultadoBusqueda = new ArrayList<>();
         int posTipo = -1;
-        switch (tipo) {
+        switch (cadena) {
             case "Charla":
                 posTipo = 0;
                 break;
@@ -56,13 +55,21 @@ public class EventoServiceImp implements EventoService {
             case "Visita cultutal":
                 posTipo = 3;
                 break;
-            default:
-                return null;
 
         }
-
-        for (int i = 0; i < tiposEvento.get(posTipo).size(); ++i) {
-            resultadoBusqueda.add(eventos.get(tiposEvento.get(posTipo).get(i)));
+        
+        for(Map.Entry<String, Evento> salida : eventos.entrySet()){
+            if(salida.getKey().contains(cadena) || salida.getValue().getDescripcion().contains(cadena)){
+               resultadoBusqueda.add(salida.getValue()); 
+            }
+        }
+        
+        
+        
+        if (posTipo != -1) {
+            for (int i = 0; i < tiposEvento.get(posTipo).size(); ++i) {
+                resultadoBusqueda.add(eventos.get(tiposEvento.get(posTipo).get(i)));
+            }
         }
         return resultadoBusqueda;
     }
@@ -135,7 +142,7 @@ public class EventoServiceImp implements EventoService {
     }
 
     @Override
-    public void CancelaUsuario( String titulo, int token) {
+    public void CancelaUsuario(String titulo, int token) {
         if (usuarios.comprobarToken(token)) {
             eventos.get(titulo).borraUsusario(usuarios.devuelveUsuario(token));
         }
