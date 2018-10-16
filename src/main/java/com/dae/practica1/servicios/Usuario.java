@@ -136,5 +136,9 @@ public class Usuario {
     public void setEventosCreados(List<Evento> eventosCreados) {
         this.eventosCreados = eventosCreados;
     }
+    
+    public void anadirEventoCreado(Evento e){
+        eventosCreados.add(e);
+    }
 
 }

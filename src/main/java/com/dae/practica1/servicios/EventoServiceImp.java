@@ -75,6 +75,7 @@ public class EventoServiceImp implements EventoService {
             } else {
                 eventos.put(titulo, new Evento(idEvento++, titulo, lugar, tipo, descripcion, fecha, aforo));
                 eventos.get(titulo).inscribirUsuario(usuarios.devuelveUsuario(token));
+                eventos.get(titulo).anadirCreador(usuarios.devuelveUsuario(token));
                 switch (tipo) {
                     case "Charla":
                         tiposEvento.get(0).add(titulo);

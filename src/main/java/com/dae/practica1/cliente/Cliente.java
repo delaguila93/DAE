@@ -181,7 +181,9 @@ public class Cliente {
     }
 
     public void listarEventosCreados(UsuarioService servicioUsuario, String usuario) {
-        for (Evento e : servicioUsuario.ListaEventosCreados(usuario, token)) {
+        Usuario usu = servicioUsuario.devuelveUsuario(usuario);
+
+        for (Evento e : usu.getEventosCreados()) {
             System.out.println("------");
             System.out.println("Titulo evento: " + e.getTitulo());
             System.out.println("descripcion: " + e.getDescripcion());
@@ -217,9 +219,7 @@ public class Cliente {
         int opcion = -1;
         UsuarioService servicioUsuario = (UsuarioService) context.getBean("usuarioServiceImp");
         EventoService servicioEvento = (EventoService) context.getBean("eventoServiceImp");
-        
-
-        
+        String usuario = "", password;
         do {
             System.out.println("--------- Menu ----------");
             System.out.println("Introduce una opcion: ");
@@ -237,7 +237,7 @@ public class Cliente {
             System.out.print("Introduce una opcion: ");
             opcion = scanner.nextInt();
             System.out.println("-------------------------");
-            String usuario = "yosiph", password = "Jose";
+
             switch (opcion) {
                 case 1: {
                     scanner.nextLine(); //Consume \n
@@ -267,6 +267,9 @@ public class Cliente {
                     break;
                 case 7:
                     cancelarInscripcion(servicioEvento, servicioUsuario, usuario);
+                    break;
+                case 8:
+                    listarEventosCreados(servicioUsuario, usuario);
                     break;
             }
 

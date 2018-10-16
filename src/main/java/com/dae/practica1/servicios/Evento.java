@@ -145,13 +145,18 @@ public class Evento {
 
     public void inscribirUsuario(Usuario usuario) {
         usuariosInscritos.add(usuario);
-        for (Usuario u : usuariosInscritos) {
+        usuario.anadirEventoInscrito(this);
+        /*for (Usuario u : usuariosInscritos) {
             if (u.getUsuario() == null ? usuario.getUsuario() == null : u.getUsuario().equals(usuario.getUsuario())) {
                 u.anadirEventoInscrito(this);
             }
-        }
+        }*/
     }
 
+    public void anadirCreador(Usuario u){
+        u.anadirEventoCreado(this);
+    }
+    
     public void anadirListaEspera(Usuario usuario) {
         listaEspera.addLast(usuario);
         usuario.anadirEnEspera(this);
