@@ -109,6 +109,7 @@ public class EventoServiceImp implements EventoService {
     public boolean BorraEvento(String titulo, int token) {
 
         if (usuarios.comprobarToken(token)) {
+            
             switch (eventos.get(titulo).getTipo()) {
 
                 case "Charla":
