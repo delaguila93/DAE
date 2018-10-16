@@ -75,14 +75,14 @@ public class EventoServiceImp implements EventoService {
     }
 
     @Override
-    public boolean CreaEvento(String titulo, String lugar, Date fecha, String tipo, String descripcion, int aforo, int token) {
+    public boolean CreaEvento(String titulo, String lugar, Date fecha, String tipo, String descripcion, int aforo,int token ,Usuario u) {
         if (usuarios.comprobarToken(token)) {
             if (eventos.get(titulo) != null) {
                 return false;
             } else {
                 eventos.put(titulo, new Evento(idEvento++, titulo, lugar, tipo, descripcion, fecha, aforo));
-                eventos.get(titulo).inscribirUsuario(usuarios.devuelveUsuario(token));
-                eventos.get(titulo).anadirCreador(usuarios.devuelveUsuario(token));
+                eventos.get(titulo).inscribirUsuario(u);
+                eventos.get(titulo).anadirCreador(u);
                 switch (tipo) {
                     case "Charla":
                         tiposEvento.get(0).add(titulo);

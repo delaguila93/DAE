@@ -80,7 +80,7 @@ public class Cliente {
         System.out.print("Introduce un aforo: ");
         int aforo = scanner.nextInt();
 
-        if (servicioEvento.CreaEvento(titulo, lugar, fechaNac, tipo, descripcion, aforo, token)) {
+        if (servicioEvento.CreaEvento(titulo, lugar, fechaNac, tipo, descripcion, aforo,token ,servicioUsuario.devuelveUsuario(token))) {
             System.out.println("Evento creado satisfactoriamente.");
         } else {
             System.out.println("El evento no ha podido ser creado.");
