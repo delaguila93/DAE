@@ -71,8 +71,11 @@ public class Cliente {
         String fecha = scanner.nextLine();
         Date fechaNac = format.parse(fecha);
 
-        System.out.print("Introduce un tipo(Charla,Curso,Actividad deportiva,Visita cultural): ");
-        String tipo = scanner.nextLine();
+        String tipo;
+        do {
+            System.out.print("Introduce un tipo(Charla,Curso,Actividad deportiva,Visita cultural): ");
+            tipo = scanner.nextLine();
+        } while (!"Charla".equals(tipo) && !"Curso".equals(tipo) && !"Actividad deportiva".equals(tipo) && !"Visita cultural".equals(tipo));
 
         System.out.print("Introduce una descripcion: ");
         String descripcion = scanner.nextLine();
@@ -80,7 +83,7 @@ public class Cliente {
         System.out.print("Introduce un aforo: ");
         int aforo = scanner.nextInt();
 
-        if (servicioEvento.CreaEvento(titulo, lugar, fechaNac, tipo, descripcion, aforo,token ,servicioUsuario.devuelveUsuario(token))) {
+        if (servicioEvento.CreaEvento(titulo, lugar, fechaNac, tipo, descripcion, aforo, token, servicioUsuario.devuelveUsuario(token))) {
             System.out.println("Evento creado satisfactoriamente.");
         } else {
             System.out.println("El evento no ha podido ser creado.");
@@ -98,10 +101,9 @@ public class Cliente {
             System.out.println("***********");
             System.out.println("Título del evento: " + e.getTitulo());
             System.out.println("Día:" + e.getFecha().toString());
-            System.out.println("Tipo: "+e.getTipo());
-            System.out.println("Descripcion: "+e.getDescripcion());
+            System.out.println("Tipo: " + e.getTipo());
+            System.out.println("Descripcion: " + e.getDescripcion());
             System.out.println("Aforo restante: " + (e.getAforo() - e.getUsuariosInscritos().size()));
-            System.out.println("***********");
         }
 
     }
@@ -162,14 +164,13 @@ public class Cliente {
         }
     }
 
-    public void cancelarInscripcion(EventoService servicioEvento, UsuarioService servicioUsuario, String usuario) {
+    public void cancelarInscripcion(EventoService servicioEvento, UsuarioService servicioUsuario) {
         Scanner scanner = new Scanner(System.in);
         String titulo;
 
-        for (Evento e : servicioUsuario.ListaEventosInscritos(usuario, token)) {
-            System.out.println("------");
+        for (Evento e : servicioUsuario.ListaEventosInscritos(token)) {
+
             System.out.println("Titulo evento: " + e.getTitulo());
-            System.out.println("descripcion: " + e.getDescripcion());
             System.out.println("Fecha: " + e.getFecha().toString());
             System.out.println("Tipo de evento: " + e.getTipo());
         }
@@ -184,35 +185,43 @@ public class Cliente {
 
     public void listarEventosCreados(UsuarioService servicioUsuario, String usuario) {
         Usuario usu = servicioUsuario.devuelveUsuario(usuario);
-
-        for (Evento e : usu.getEventosCreados()) {
-            System.out.println("------");
-            System.out.println("Titulo evento: " + e.getTitulo());
-            System.out.println("descripcion: " + e.getDescripcion());
-            System.out.println("Fecha: " + e.getFecha().toString());
-            System.out.println("Tipo de evento: " + e.getTipo());
+        if (!usu.getEventosCreados().isEmpty()) {
+            for (Evento e : usu.getEventosCreados()) {
+                System.out.println("------");
+                System.out.println("Titulo evento: " + e.getTitulo());
+                System.out.println("descripcion: " + e.getDescripcion());
+                System.out.println("Fecha: " + e.getFecha().toString());
+                System.out.println("Tipo de evento: " + e.getTipo());
+            }
+        } else {
+            System.out.println("Aun no has creado ningún evento");
         }
     }
 
-    public void listarEventosInscritos(UsuarioService servicioUsuario, String usuario) {
-        System.out.println("--Eventos en los que estas inscrito--");
+    public void listarEventosInscritos(UsuarioService servicioUsuario) {
 
-        for (Evento e : servicioUsuario.ListaEventosInscritos(usuario, token)) {
-            System.out.println("------");
-            System.out.println("Titulo evento: " + e.getTitulo());
-            System.out.println("descripcion: " + e.getDescripcion());
-            System.out.println("Fecha: " + e.getFecha().toString());
-            System.out.println("Tipo de evento: " + e.getTipo());
+        if (!servicioUsuario.ListaEventosInscritos(token).isEmpty()) {
+            System.out.println("--Eventos en los que estas inscrito--");
+            for (Evento e : servicioUsuario.ListaEventosInscritos(token)) {
+                System.out.println("------");
+                System.out.println("Titulo evento: " + e.getTitulo());
+                System.out.println("descripcion: " + e.getDescripcion());
+                System.out.println("Fecha: " + e.getFecha().toString());
+                System.out.println("Tipo de evento: " + e.getTipo());
+            }
+        } else {
+            System.out.println("No se ha inscrito en ningun evento todavia.");
         }
+        if (!servicioUsuario.ListaEventosEnEspera(token).isEmpty()) {
+            System.out.println("--Eventos en los que estas en lista de espera--");
 
-        System.out.println("--Eventos en los que estas en lista de espera--");
-
-        for (Evento e : servicioUsuario.ListaEventosEnEspera(usuario, token)) {
-            System.out.println("------");
-            System.out.println("Titulo evento: " + e.getTitulo());
-            System.out.println("descripcion: " + e.getDescripcion());
-            System.out.println("Fecha: " + e.getFecha().toString());
-            System.out.println("Tipo de evento: " + e.getTipo());
+            for (Evento e : servicioUsuario.ListaEventosEnEspera( token)) {
+                System.out.println("------");
+                System.out.println("Titulo evento: " + e.getTitulo());
+                System.out.println("descripcion: " + e.getDescripcion());
+                System.out.println("Fecha: " + e.getFecha().toString());
+                System.out.println("Tipo de evento: " + e.getTipo());
+            }
         }
     }
 
@@ -233,7 +242,7 @@ public class Cliente {
                 System.out.println("4.- Crear evento");
                 System.out.println("5.- Cancelar evento");
                 System.out.println("6.- Inscribirse a un evento");
-                System.out.println("7.- Cancelar inscripcion a un evento");                
+                System.out.println("7.- Cancelar inscripcion a un evento");
                 System.out.println("8.- Mostras eventos creados");
                 System.out.println("9.- mostrar eventos inscritos");
             }
@@ -270,13 +279,13 @@ public class Cliente {
                     inscribirUsuario(servicioEvento, token, servicioUsuario);
                     break;
                 case 7:
-                    cancelarInscripcion(servicioEvento, servicioUsuario, usuario);
+                    cancelarInscripcion(servicioEvento, servicioUsuario);
                     break;
                 case 8:
                     listarEventosCreados(servicioUsuario, usuario);
                     break;
                 case 9:
-                    listarEventosInscritos(servicioUsuario, usuario);
+                    listarEventosInscritos(servicioUsuario);
                     break;
             }
 

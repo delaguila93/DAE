@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  *
  * @author macosx
  */
-@Component
+@Component("eventoService")
 public interface EventoService {
     
     public List<Evento> BuscaEvento(String busqueda);

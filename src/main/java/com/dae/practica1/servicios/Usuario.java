@@ -140,5 +140,11 @@ public class Usuario {
     public void anadirEventoCreado(Evento e){
         eventosCreados.add(e);
     }
+    
+    public void eliminarEvento(Evento e){
+        eventosInscritos.remove(e);
+        eventosEsperando.remove(e);
+        eventosCreados.remove(e);
+    }
 
 }

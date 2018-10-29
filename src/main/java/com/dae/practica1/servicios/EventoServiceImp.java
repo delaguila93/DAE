@@ -24,7 +24,7 @@ public class EventoServiceImp implements EventoService {
     private int idEvento = 0;
 
     @Autowired
-    @Qualifier("UsuarioService")
+   // @Qualifier("usuarioService")
     private UsuarioService usuarios;
 
     public EventoServiceImp() {
@@ -124,7 +124,9 @@ public class EventoServiceImp implements EventoService {
                     tiposEvento.get(3).remove(titulo);
                     break;
             }
-
+            for(Usuario u:eventos.get(titulo).getUsuariosInscritos()){
+                u.eliminarEvento(eventos.get(titulo));
+            }
             return eventos.remove(titulo, eventos.get(titulo));
         }
         return false;

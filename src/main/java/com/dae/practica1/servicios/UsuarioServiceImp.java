@@ -9,7 +9,10 @@ import com.dae.practica1.servicios.Evento;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import org.springframework.stereotype.Component;
 
 /**
@@ -19,6 +22,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class UsuarioServiceImp implements UsuarioService {
 
+    private Set<Integer> tokenCreados;
     private Map<String, Usuario> usuarios;
     private Map<Integer, String> identificados;
     private int idUsuario = 0;
@@ -26,16 +30,28 @@ public class UsuarioServiceImp implements UsuarioService {
     public UsuarioServiceImp() {
         usuarios = new TreeMap<>();
         identificados = new TreeMap<>();
+        tokenCreados=new TreeSet<>();
         usuarios.put("yosiph", new Usuario(++idUsuario, "yosiph", "yosiph", "Jose", new Date()));
         identificados.put(idUsuario, "yosiph");
 
     }
+    private int GenerarToken(){
+        int token=-1;
+        Random random=new Random();
+        do{
+            token = random.nextInt(899999)+100000;
+        }while(tokenCreados.contains(token));
+        tokenCreados.add(token);
+        return token;
+    }
 
     @Override
     public boolean RegistraUsuario(String usuario, String password, String nombre, Date fNac) {
-
-        Usuario aux = new Usuario(++idUsuario, usuario, nombre, password, fNac);
+        
+        idUsuario=GenerarToken();
+        Usuario aux = new Usuario(idUsuario, usuario, nombre, password, fNac);
         Usuario anadido = usuarios.put(usuario, aux);
+        
 
         return anadido != null;
     }
@@ -43,27 +59,28 @@ public class UsuarioServiceImp implements UsuarioService {
     @Override
     public int IdentificaUsuario(String usuario, String password) {
         int identificado = -1;
-        if (usuarios.get(usuario) != null) {
-            if (usuarios.get(usuario).getPassword().equals(password)) {
-                identificado = usuarios.get(usuario).getIdUsuario();
-                identificados.put(usuarios.get(usuario).getIdUsuario(), usuario);
+        Usuario u = usuarios.get(usuario);
+        if (u != null) {
+            if (u.getPassword().equals(password)) {
+                identificado = u.getIdUsuario();
+                identificados.put(identificado, usuario);
             }
         }
         return identificado;
     }
 
     @Override
-    public List<Evento> ListaEventosInscritos(String usuario, int token) {
+    public List<Evento> ListaEventosInscritos(int token) {
         if (comprobarToken(token)) {
-            return usuarios.get(usuario).getEventosInscritos();
+            return usuarios.get(identificados.get(token)).getEventosInscritos();
         }
         return null;
     }
 
     @Override
-    public List<Evento> ListaEventosCreados(String usuario, int token) {
+    public List<Evento> ListaEventosCreados( int token) {
         if (comprobarToken(token)) {
-            return usuarios.get(usuario).getEventosCreados();
+            return usuarios.get(identificados.get(token)).getEventosCreados();
         }
         return null;
     }
@@ -76,9 +93,9 @@ public class UsuarioServiceImp implements UsuarioService {
 
 
     @Override
-    public List<Evento> ListaEventosEnEspera(String usuario, int token) {
+    public List<Evento> ListaEventosEnEspera(int token) {
         if (comprobarToken(token)) {
-            return usuarios.get(usuario).getEventosEsperando();
+            return usuarios.get(identificados.get(token)).getEventosEsperando();
         }
         return null;
     }
