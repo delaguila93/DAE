@@ -26,19 +26,19 @@ import org.springframework.context.annotation.ImportResource;
 @SpringBootApplication(scanBasePackages="com.dae.practica1")
 
 public class Servidor {
-    
-    @Bean
-    UsuarioService UsuarioService(){
-        UsuarioServiceImp servicio = new UsuarioServiceImp();
-        return servicio;
-    }
-    
-    @Bean
-    EventoService EventoService(){
-        EventoServiceImp servicioEventos = new EventoServiceImp();
-        return servicioEventos;
-    }
-    
+//    
+//    @Bean
+//    UsuarioService UsuarioService(){
+//        UsuarioServiceImp servicio = new UsuarioServiceImp();
+//        return servicio;
+//    }
+//    
+//    @Bean
+//    EventoService EventoService(){
+//        EventoServiceImp servicioEventos = new EventoServiceImp();
+//        return servicioEventos;
+//    }
+//    
     public static void main(String[] args) throws Exception{
         SpringApplication servidor = new SpringApplication(Servidor.class);
         ApplicationContext contexto = servidor.run(args);

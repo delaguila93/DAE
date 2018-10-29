@@ -14,12 +14,12 @@ import org.springframework.stereotype.Component;
  *
  * @author macosx
  */
-@Component
+@Component("eventoService")
 public interface EventoService {
     
     public List<Evento> BuscaEvento(String busqueda);
     
-    public boolean CreaEvento(String titulo, String lugar, Date fecha, String tipo, String decripcion, int aforo,int token);
+    public boolean CreaEvento(String titulo, String lugar, Date fecha, String tipo, String decripcion, int aforo,int token,Usuario u);
     
     public boolean BorraEvento(String titulo,int token);
     

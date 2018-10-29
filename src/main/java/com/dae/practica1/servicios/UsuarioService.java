@@ -16,20 +16,20 @@ import org.springframework.stereotype.Component;
  *
  * @author macosx
  */
-@Component
+@Component("usuarioService")
 public interface UsuarioService {
     
     public boolean RegistraUsuario(String usuario, String password, String nombre, Date fNac);
     
     public int IdentificaUsuario(String usuario, String password);
     
-    public List<Evento> ListaEventosInscritos(String usuario, int token);
+    public List<Evento> ListaEventosInscritos(int token);
     
-    public List<Evento> ListaEventosCreados(String usuario, int token );
+    public List<Evento> ListaEventosCreados(int token );
     
     public Usuario devuelveUsuario(String usuario);
     
-    public List<Evento> ListaEventosEnEspera(String usuario,int token);
+    public List<Evento> ListaEventosEnEspera(int token);
     
     public boolean comprobarToken(int token);
     

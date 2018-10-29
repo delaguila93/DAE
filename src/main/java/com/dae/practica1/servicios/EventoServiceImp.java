@@ -24,7 +24,7 @@ public class EventoServiceImp implements EventoService {
     private int idEvento = 0;
 
     @Autowired
-    @Qualifier("UsuarioService")
+   // @Qualifier("usuarioService")
     private UsuarioService usuarios;
 
     public EventoServiceImp() {
@@ -75,14 +75,14 @@ public class EventoServiceImp implements EventoService {
     }
 
     @Override
-    public boolean CreaEvento(String titulo, String lugar, Date fecha, String tipo, String descripcion, int aforo, int token) {
+    public boolean CreaEvento(String titulo, String lugar, Date fecha, String tipo, String descripcion, int aforo,int token ,Usuario u) {
         if (usuarios.comprobarToken(token)) {
             if (eventos.get(titulo) != null) {
                 return false;
             } else {
                 eventos.put(titulo, new Evento(idEvento++, titulo, lugar, tipo, descripcion, fecha, aforo));
-                eventos.get(titulo).inscribirUsuario(usuarios.devuelveUsuario(token));
-                eventos.get(titulo).anadirCreador(usuarios.devuelveUsuario(token));
+                eventos.get(titulo).inscribirUsuario(u);
+                eventos.get(titulo).anadirCreador(u);
                 switch (tipo) {
                     case "Charla":
                         tiposEvento.get(0).add(titulo);
@@ -125,7 +125,9 @@ public class EventoServiceImp implements EventoService {
                     tiposEvento.get(3).remove(titulo);
                     break;
             }
-
+            for(Usuario u:eventos.get(titulo).getUsuariosInscritos()){
+                u.eliminarEvento(eventos.get(titulo));
+            }
             return eventos.remove(titulo, eventos.get(titulo));
         }
         return false;
