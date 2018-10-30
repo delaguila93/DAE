@@ -24,7 +24,7 @@ public class EventoServiceImp implements EventoService {
     private int idEvento = 0;
 
     @Autowired
-   // @Qualifier("usuarioService")
+    // @Qualifier("usuarioService")
     private UsuarioService usuarios;
 
     public EventoServiceImp() {
@@ -57,15 +57,13 @@ public class EventoServiceImp implements EventoService {
                 break;
 
         }
-        
-        for(Map.Entry<String, Evento> salida : eventos.entrySet()){
-            if(salida.getKey().contains(cadena) || salida.getValue().getDescripcion().contains(cadena)){
-               resultadoBusqueda.add(salida.getValue()); 
+
+        for (Map.Entry<String, Evento> salida : eventos.entrySet()) {
+            if (salida.getKey().contains(cadena) || salida.getValue().getDescripcion().contains(cadena)) {
+                resultadoBusqueda.add(salida.getValue());
             }
         }
-        
-        
-        
+
         if (posTipo != -1) {
             for (int i = 0; i < tiposEvento.get(posTipo).size(); ++i) {
                 resultadoBusqueda.add(eventos.get(tiposEvento.get(posTipo).get(i)));
@@ -75,14 +73,15 @@ public class EventoServiceImp implements EventoService {
     }
 
     @Override
-    public boolean CreaEvento(String titulo, String lugar, Date fecha, String tipo, String descripcion, int aforo,int token ,Usuario u) {
+    public void CreaEvento(String titulo, String lugar, Date fecha, String tipo, String descripcion, int aforo, int token, Usuario u) throws EventoNoCreadoException {
+        Evento e = eventos.get(titulo);
         if (usuarios.comprobarToken(token)) {
-            if (eventos.get(titulo) != null) {
-                return false;
+            if (e != null) {
+                throw new EventoNoCreadoException();
             } else {
                 eventos.put(titulo, new Evento(idEvento++, titulo, lugar, tipo, descripcion, fecha, aforo));
-                eventos.get(titulo).inscribirUsuario(u);
-                eventos.get(titulo).anadirCreador(u);
+                e.inscribirUsuario(u);
+                e.anadirCreador(u);
                 switch (tipo) {
                     case "Charla":
                         tiposEvento.get(0).add(titulo);
@@ -97,20 +96,18 @@ public class EventoServiceImp implements EventoService {
                         tiposEvento.get(3).add(titulo);
                         break;
                 }
-                return true;
             }
-
+        } else {
+            throw new EventoNoCreadoException();
         }
-        return false;
 
     }
 
     @Override
-    public boolean BorraEvento(String titulo, int token) {
-
+    public void BorraEvento(String titulo, int token) throws EventoNoEncontradoException{
+        Evento e = eventos.get(titulo);
         if (usuarios.comprobarToken(token)) {
-            
-            switch (eventos.get(titulo).getTipo()) {
+            switch (e.getTipo()) {
 
                 case "Charla":
                     tiposEvento.get(0).remove(titulo);
@@ -125,21 +122,23 @@ public class EventoServiceImp implements EventoService {
                     tiposEvento.get(3).remove(titulo);
                     break;
             }
-            for(Usuario u:eventos.get(titulo).getUsuariosInscritos()){
-                u.eliminarEvento(eventos.get(titulo));
+            for (Usuario u : e.getUsuariosInscritos()) {
+                u.eliminarEvento(e);
             }
-            return eventos.remove(titulo, eventos.get(titulo));
+            eventos.remove(titulo, e);
+        }else{
+            throw new EventoNoEncontradoException();
         }
-        return false;
     }
 
     @Override
     public boolean InscribeUsuario(Usuario usuario, String titulo) {
-        if (eventos.get(titulo).getAforo() == eventos.get(titulo).tamListaInscritos()) {
-            eventos.get(titulo).anadirListaEspera(usuario);
+        Evento e = eventos.get(titulo);
+        if (e.getAforo() == e.tamListaInscritos()) {
+            e.anadirListaEspera(usuario);
             return false;
         }
-        eventos.get(titulo).inscribirUsuario(usuario);
+        e.inscribirUsuario(usuario);
         return true;
 
     }

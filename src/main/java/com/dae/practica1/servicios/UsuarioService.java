@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 @Component("usuarioService")
 public interface UsuarioService {
     
-    public boolean RegistraUsuario(String usuario, String password, String nombre, Date fNac);
+    public void RegistraUsuario(String usuario, String password, String nombre, Date fNac)throws UsuarioNoCreadoException;
     
     public int IdentificaUsuario(String usuario, String password);
     
