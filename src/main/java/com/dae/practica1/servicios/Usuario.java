@@ -5,21 +5,34 @@
  */
 package com.dae.practica1.servicios;
 
-import com.dae.practica1.servicios.Evento;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import org.hibernate.annotations.Entity;
+import org.springframework.data.annotation.Id;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  *
  * @author macosx
  */
+@Entity
 public class Usuario {
 
+    @Id
     private int idUsuario;
     private String usuario, nombre, password;
+    @Temporal(TemporalType.DATE)
     private Date fNac;
-    private List<Evento> eventosInscritos, eventosCreados, eventosEsperando;
+    @OneToMany(mappedBy = "creados")
+    private List<Evento> eventosCreados;
+    @ManyToMany
+    private List<Evento> eventosInscritos;
+    @ManyToMany
+    private List<Evento> eventosEsperando;
 
     public Usuario() {
         this.idUsuario = -1;
@@ -118,8 +131,8 @@ public class Usuario {
     public void anadirEnEspera(Evento e) {
         eventosEsperando.add(e);
     }
-    
-    public void quitarEspera(Evento e){
+
+    public void quitarEspera(Evento e) {
         eventosEsperando.remove(e);
     }
 
@@ -136,12 +149,12 @@ public class Usuario {
     public void setEventosCreados(List<Evento> eventosCreados) {
         this.eventosCreados = eventosCreados;
     }
-    
-    public void anadirEventoCreado(Evento e){
+
+    public void anadirEventoCreado(Evento e) {
         eventosCreados.add(e);
     }
-    
-    public void eliminarEvento(Evento e){
+
+    public void eliminarEvento(Evento e) {
         eventosInscritos.remove(e);
         eventosEsperando.remove(e);
         eventosCreados.remove(e);

@@ -88,7 +88,7 @@ public class Cliente {
         int aforo = scanner.nextInt();
 
         try{
-            servicioEvento.CreaEvento(titulo, lugar, fechaNac, tipo, descripcion, aforo, token, servicioUsuario.devuelveUsuario(token));             
+            servicioEvento.CreaEvento(titulo, lugar, fechaNac, tipo, descripcion, aforo, token);             
             System.out.println("Evento creado satisfactoriamente.");
         } catch(EventoNoCreadoException e) {
             System.out.println("El evento no ha podido ser creado.");

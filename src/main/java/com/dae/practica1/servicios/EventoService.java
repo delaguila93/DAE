@@ -19,7 +19,7 @@ public interface EventoService {
     
     public List<Evento> BuscaEvento(String busqueda);
     
-    public void CreaEvento(String titulo, String lugar, Date fecha, String tipo, String decripcion, int aforo,int token,Usuario u) throws EventoNoCreadoException;
+    public void CreaEvento(String titulo, String lugar, Date fecha, String tipo, String decripcion, int aforo,int token) throws EventoNoCreadoException;
     
     public void BorraEvento(String titulo,int token) throws EventoNoEncontradoException;
     

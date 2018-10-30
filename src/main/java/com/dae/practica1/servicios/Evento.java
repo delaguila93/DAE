@@ -6,20 +6,36 @@
 package com.dae.practica1.servicios;
 
 import java.util.*;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import org.hibernate.annotations.Entity;
+import org.springframework.data.annotation.Id;
 
 /**
  *
  * @author macosx
  */
+@Entity
 public class Evento {
 
+    @Id
+    @GeneratedValue(strategy=GenerationType.SEQUENCE)
     private int idEvento;
     private String titulo, lugar, tipo, descripcion;
+    @Temporal(TemporalType.DATE)
     private Date fecha;
     private int aforo;
 
-    private ArrayList<Usuario> usuariosInscritos;
-    private LinkedList<Usuario> listaEspera;
+    @ManyToOne
+    private Usuario creador;
+    @ManyToMany(mappedBy="usuariosInscritos")
+    private List<Usuario> usuariosInscritos;
+    @ManyToMany(mappedBy="usuariosEspera")
+    private List<Usuario> listaEspera;
 
     public Evento() {
         this.idEvento = -1;
@@ -29,11 +45,12 @@ public class Evento {
         this.descripcion = "";
         this.fecha = null;
         this.aforo = -1;
+        this.creador = null;
         usuariosInscritos = new ArrayList<>();
-        listaEspera = new LinkedList<>();
+        listaEspera = new ArrayList<>();
     }
 
-    public Evento(int idEvento, String titulo, String lugar, String tipo, String descripcion, Date fecha, int aforo) {
+    public Evento(int idEvento, String titulo, String lugar, String tipo, String descripcion, Date fecha, int aforo, Usuario creador) {
         this.idEvento = idEvento;
         this.titulo = titulo;
         this.lugar = lugar;
@@ -41,6 +58,7 @@ public class Evento {
         this.descripcion = descripcion;
         this.fecha = fecha;
         this.aforo = aforo;
+        this.creador = creador;
         usuariosInscritos = new ArrayList<>();
         listaEspera = new LinkedList<>();
     }
@@ -146,26 +164,22 @@ public class Evento {
     public void inscribirUsuario(Usuario usuario) {
         usuariosInscritos.add(usuario);
         usuario.anadirEventoInscrito(this);
-        /*for (Usuario u : usuariosInscritos) {
-            if (u.getUsuario() == null ? usuario.getUsuario() == null : u.getUsuario().equals(usuario.getUsuario())) {
-                u.anadirEventoInscrito(this);
-            }
-        }*/
     }
 
-    public void anadirCreador(Usuario u){
+    public void anadirCreador(Usuario u) {
         u.anadirEventoCreado(this);
     }
-    
+
     public void anadirListaEspera(Usuario usuario) {
-        listaEspera.addLast(usuario);
+        
+        listaEspera.add(usuario);
         usuario.anadirEnEspera(this);
     }
 
     /**
      * @return the usuariosInscritos
      */
-    public ArrayList<Usuario> getUsuariosInscritos() {
+    public List<Usuario> getUsuariosInscritos() {
         return usuariosInscritos;
     }
 
@@ -183,16 +197,16 @@ public class Evento {
     public void borraUsusario(Usuario usuario) {
         usuariosInscritos.remove(usuario);
         if (listaEspera.size() > 0) {
-            usuariosInscritos.add(listaEspera.pollFirst());
+            usuariosInscritos.add(listaEspera.remove(0));       
         }
-        usuariosInscritos.get(usuariosInscritos.size()-1).anadirEventoInscrito(this);
-        usuariosInscritos.get(usuariosInscritos.size()-1).quitarEspera(this);
+        usuariosInscritos.get(usuariosInscritos.size() - 1).anadirEventoInscrito(this);
+        usuariosInscritos.get(usuariosInscritos.size() - 1).quitarEspera(this);
     }
 
     /**
      * @return the listaEspera
      */
-    public LinkedList<Usuario> getListaEspera() {
+    public List<Usuario> getListaEspera() {
         return listaEspera;
     }
 
@@ -201,5 +215,19 @@ public class Evento {
      */
     public void setListaEspera(LinkedList<Usuario> listaEspera) {
         this.listaEspera = listaEspera;
+    }
+
+    /**
+     * @return the creador
+     */
+    public Usuario getCreador() {
+        return creador;
+    }
+
+    /**
+     * @param creador the creador to set
+     */
+    public void setCreador(Usuario creador) {
+        this.creador = creador;
     }
 }

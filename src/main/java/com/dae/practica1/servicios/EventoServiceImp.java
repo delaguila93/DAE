@@ -29,7 +29,7 @@ public class EventoServiceImp implements EventoService {
 
     public EventoServiceImp() {
         eventos = new TreeMap<>();
-        eventos.put("Micasa", new Evento(idEvento++, "Micasa", "Andujar", "Charla", "Hambre mucha hambre", new Date(), 1));
+        eventos.put("Micasa", new Evento(idEvento++, "Micasa", "Andujar", "Charla", "Hambre mucha hambre", new Date(), 1,new Usuario()));
         tiposEvento = new ArrayList<>(4);
         for (int i = 0; i < 4; ++i) {
             tiposEvento.add(new ArrayList<>());
@@ -73,13 +73,14 @@ public class EventoServiceImp implements EventoService {
     }
 
     @Override
-    public void CreaEvento(String titulo, String lugar, Date fecha, String tipo, String descripcion, int aforo, int token, Usuario u) throws EventoNoCreadoException {
+    public void CreaEvento(String titulo, String lugar, Date fecha, String tipo, String descripcion, int aforo, int token) throws EventoNoCreadoException {
         Evento e = eventos.get(titulo);
         if (usuarios.comprobarToken(token)) {
+            Usuario u=usuarios.devuelveUsuario(token);
             if (e != null) {
                 throw new EventoNoCreadoException();
             } else {
-                eventos.put(titulo, new Evento(idEvento++, titulo, lugar, tipo, descripcion, fecha, aforo));
+                eventos.put(titulo, new Evento(idEvento++, titulo, lugar, tipo, descripcion, fecha, aforo,u));
                 e.inscribirUsuario(u);
                 e.anadirCreador(u);
                 switch (tipo) {
