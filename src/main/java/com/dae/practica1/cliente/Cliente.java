@@ -9,6 +9,9 @@ import com.dae.practica1.servicios.Evento;
 import com.dae.practica1.servicios.EventoService;
 import com.dae.practica1.servicios.Usuario;
 import com.dae.practica1.servicios.UsuarioService;
+import com.dae.practica1.servicios.UsuarioNoCreadoException;
+import com.dae.practica1.servicios.EventoNoCreadoException;
+import com.dae.practica1.servicios.EventoNoEncontradoException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -48,11 +51,12 @@ public class Cliente {
         System.out.print("Introduce tu fecha de nacimiento formato DD/MM/YYYY: ");
         String fecha = scanner.nextLine();
         Date fechaNac = format.parse(fecha);
-
-        boolean insertado = servicioUsusario.RegistraUsuario(usuario, password, nombre, fechaNac);
-
-        if (insertado) {
-            System.out.println("Inserccion correcta");
+        try {
+            servicioUsusario.RegistraUsuario(usuario, password, nombre, fechaNac);
+            
+        System.out.println("Insercion correcta");
+        } catch (UsuarioNoCreadoException e) {
+            System.out.println("Insercion no realizada");
         }
 
     }
@@ -83,9 +87,10 @@ public class Cliente {
         System.out.print("Introduce un aforo: ");
         int aforo = scanner.nextInt();
 
-        if (servicioEvento.CreaEvento(titulo, lugar, fechaNac, tipo, descripcion, aforo, token, servicioUsuario.devuelveUsuario(token))) {
+        try{
+            servicioEvento.CreaEvento(titulo, lugar, fechaNac, tipo, descripcion, aforo, token, servicioUsuario.devuelveUsuario(token));             
             System.out.println("Evento creado satisfactoriamente.");
-        } else {
+        } catch(EventoNoCreadoException e) {
             System.out.println("El evento no ha podido ser creado.");
         }
 
@@ -133,10 +138,11 @@ public class Cliente {
 
         System.out.print("Introduce el nombre del evento que vas a cancelar: ");
         titulo = scanner.nextLine();
-        if (servicioEvento.BorraEvento(titulo, token)) {
+       try{
+           servicioEvento.BorraEvento(titulo, token);
             System.out.println("Evento borrado correctamente");
 
-        } else {
+        } catch(EventoNoEncontradoException e) {
             System.out.println("Fallo a la hora de borrar el evento");
         }
 
@@ -215,7 +221,7 @@ public class Cliente {
         if (!servicioUsuario.ListaEventosEnEspera(token).isEmpty()) {
             System.out.println("--Eventos en los que estas en lista de espera--");
 
-            for (Evento e : servicioUsuario.ListaEventosEnEspera( token)) {
+            for (Evento e : servicioUsuario.ListaEventosEnEspera(token)) {
                 System.out.println("------");
                 System.out.println("Titulo evento: " + e.getTitulo());
                 System.out.println("descripcion: " + e.getDescripcion());

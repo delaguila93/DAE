@@ -3,9 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
+
 package com.dae.practica1.servicios;
 
-import com.dae.practica1.servicios.Evento;
+
+
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +17,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import org.springframework.stereotype.Component;
-
 /**
  *
  * @author macosx
@@ -30,30 +32,35 @@ public class UsuarioServiceImp implements UsuarioService {
     public UsuarioServiceImp() {
         usuarios = new TreeMap<>();
         identificados = new TreeMap<>();
-        tokenCreados=new TreeSet<>();
+        tokenCreados = new TreeSet<>();
         usuarios.put("yosiph", new Usuario(++idUsuario, "yosiph", "yosiph", "Jose", new Date()));
         identificados.put(idUsuario, "yosiph");
 
     }
-    private int GenerarToken(){
-        int token=-1;
-        Random random=new Random();
-        do{
-            token = random.nextInt(899999)+100000;
-        }while(tokenCreados.contains(token));
+
+    private int GenerarToken() {
+        int token = -1;
+        Random random = new Random();
+        do {
+            token = random.nextInt(899999) + 100000;
+        } while (tokenCreados.contains(token));
         tokenCreados.add(token);
         return token;
     }
 
     @Override
-    public boolean RegistraUsuario(String usuario, String password, String nombre, Date fNac) {
-        
-        idUsuario=GenerarToken();
-        Usuario aux = new Usuario(idUsuario, usuario, nombre, password, fNac);
-        Usuario anadido = usuarios.put(usuario, aux);
-        
+    public void RegistraUsuario(String usuario, String password, String nombre, Date fNac) throws UsuarioNoCreadoException{
+        if(usuario.length() > 1 && password.length() > 3 && nombre.length() > 2){
+        try {
+            idUsuario = GenerarToken();
+            Usuario aux = new Usuario(idUsuario, usuario, nombre, password, fNac);
+            Usuario anadido = usuarios.put(usuario, aux);
+        } catch (NullPointerException e) {
+            throw new UsuarioNoCreadoException();
+        }}else{
+            throw new UsuarioNoCreadoException();
+        }
 
-        return anadido != null;
     }
 
     @Override
@@ -78,7 +85,7 @@ public class UsuarioServiceImp implements UsuarioService {
     }
 
     @Override
-    public List<Evento> ListaEventosCreados( int token) {
+    public List<Evento> ListaEventosCreados(int token) {
         if (comprobarToken(token)) {
             return usuarios.get(identificados.get(token)).getEventosCreados();
         }
@@ -89,8 +96,6 @@ public class UsuarioServiceImp implements UsuarioService {
     public Usuario devuelveUsuario(String usuario) {
         return usuarios.get(usuario);
     }
-
-
 
     @Override
     public List<Evento> ListaEventosEnEspera(int token) {
@@ -109,7 +114,5 @@ public class UsuarioServiceImp implements UsuarioService {
     public Usuario devuelveUsuario(int token) {
         return usuarios.get(identificados.get(token));
     }
-    
-    
 
 }

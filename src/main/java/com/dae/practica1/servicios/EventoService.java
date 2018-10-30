@@ -19,13 +19,13 @@ public interface EventoService {
     
     public List<Evento> BuscaEvento(String busqueda);
     
-    public boolean CreaEvento(String titulo, String lugar, Date fecha, String tipo, String decripcion, int aforo,int token,Usuario u);
+    public void CreaEvento(String titulo, String lugar, Date fecha, String tipo, String decripcion, int aforo,int token,Usuario u) throws EventoNoCreadoException;
     
-    public boolean BorraEvento(String titulo,int token);
+    public void BorraEvento(String titulo,int token) throws EventoNoEncontradoException;
     
-    public boolean InscribeUsuario(Usuario usuario,String titulo);//No es string es un objeto Usuario para el usuario, lo mismo para Evento
+    public boolean InscribeUsuario(Usuario usuario,String titulo);
     
-    public void CancelaUsuario(String titulo,int token);//No es string es un objeto Usuario para el usuario, lo mismo para Evento
+    public void CancelaUsuario(String titulo,int token);
     
     public Map<String,Evento> eventosCreados();
     
