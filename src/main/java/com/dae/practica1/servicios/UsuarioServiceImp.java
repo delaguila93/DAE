@@ -16,6 +16,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 /**
  *
@@ -29,6 +30,9 @@ public class UsuarioServiceImp implements UsuarioService {
     private Map<Integer, String> identificados;
     private int idUsuario = 0;
 
+    @Autowired
+    private UsuarioDAO usuarioDAO;
+    
     public UsuarioServiceImp() {
         usuarios = new TreeMap<>();
         identificados = new TreeMap<>();
@@ -54,7 +58,7 @@ public class UsuarioServiceImp implements UsuarioService {
         try {
             idUsuario = GenerarToken();
             Usuario aux = new Usuario(idUsuario, usuario, nombre, password, fNac);
-            Usuario anadido = usuarios.put(usuario, aux);
+            usuarioDAO.RegistraUsuario(aux);
         } catch (NullPointerException e) {
             throw new UsuarioNoCreadoException();
         }}else{
@@ -66,7 +70,7 @@ public class UsuarioServiceImp implements UsuarioService {
     @Override
     public int IdentificaUsuario(String usuario, String password) {
         int identificado = -1;
-        Usuario u = usuarios.get(usuario);
+        Usuario u = usuarioDAO.DevuelveUsuario(usuario);
         if (u != null) {
             if (u.getPassword().equals(password)) {
                 identificado = u.getIdUsuario();
@@ -79,7 +83,7 @@ public class UsuarioServiceImp implements UsuarioService {
     @Override
     public List<Evento> ListaEventosInscritos(int token) {
         if (comprobarToken(token)) {
-            return usuarios.get(identificados.get(token)).getEventosInscritos();
+            return usuarioDAO.EventosInscritos(token);
         }
         return null;
     }
@@ -87,20 +91,20 @@ public class UsuarioServiceImp implements UsuarioService {
     @Override
     public List<Evento> ListaEventosCreados(int token) {
         if (comprobarToken(token)) {
-            return usuarios.get(identificados.get(token)).getEventosCreados();
+            return usuarioDAO.EventosCreados(token);
         }
         return null;
     }
 
     @Override
     public Usuario devuelveUsuario(String usuario) {
-        return usuarios.get(usuario);
+        return usuarioDAO.DevuelveUsuario(usuario);
     }
 
     @Override
     public List<Evento> ListaEventosEnEspera(int token) {
         if (comprobarToken(token)) {
-            return usuarios.get(identificados.get(token)).getEventosEsperando();
+            return usuarioDAO.EventosEsperando(token);
         }
         return null;
     }
@@ -112,7 +116,7 @@ public class UsuarioServiceImp implements UsuarioService {
 
     @Override
     public Usuario devuelveUsuario(int token) {
-        return usuarios.get(identificados.get(token));
+        return usuarioDAO.DevuelveUsuario(token);
     }
 
 }

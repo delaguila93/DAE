@@ -8,18 +8,25 @@ package com.dae.practica1.servicios;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.MapKeyTemporal;
 import javax.persistence.OneToMany;
-import org.hibernate.annotations.Entity;
-import org.springframework.data.annotation.Id;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import static javax.persistence.TemporalType.DATE;
 
 /**
  *
  * @author macosx
  */
 @Entity
+@Table(name = "Usuario")
 public class Usuario {
 
     @Id
@@ -27,8 +34,10 @@ public class Usuario {
     private String usuario, nombre, password;
     @Temporal(TemporalType.DATE)
     private Date fNac;
-    @OneToMany(mappedBy = "creados")
+
+    @OneToMany(mappedBy = "creador")
     private List<Evento> eventosCreados;
+
     @ManyToMany
     private List<Evento> eventosInscritos;
     @ManyToMany

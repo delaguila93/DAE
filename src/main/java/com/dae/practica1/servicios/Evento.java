@@ -6,20 +6,23 @@
 package com.dae.practica1.servicios;
 
 import java.util.*;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import org.hibernate.annotations.Entity;
-import org.springframework.data.annotation.Id;
 
 /**
  *
  * @author macosx
  */
 @Entity
+@Table(name = "Evento")
 public class Evento {
 
     @Id
@@ -31,11 +34,13 @@ public class Evento {
     private int aforo;
 
     @ManyToOne
+    @JoinColumn(name="creador")
     private Usuario creador;
-    @ManyToMany(mappedBy="usuariosInscritos")
+    
+    @ManyToMany(mappedBy="eventosInscritos")
     private List<Usuario> usuariosInscritos;
-    @ManyToMany(mappedBy="usuariosEspera")
-    private List<Usuario> listaEspera;
+    @ManyToMany(mappedBy="eventosEsperando")
+    private Map<Date,Usuario> listaEspera;
 
     public Evento() {
         this.idEvento = -1;
@@ -47,7 +52,7 @@ public class Evento {
         this.aforo = -1;
         this.creador = null;
         usuariosInscritos = new ArrayList<>();
-        listaEspera = new ArrayList<>();
+        listaEspera = new TreeMap<>();
     }
 
     public Evento(int idEvento, String titulo, String lugar, String tipo, String descripcion, Date fecha, int aforo, Usuario creador) {
@@ -60,7 +65,7 @@ public class Evento {
         this.aforo = aforo;
         this.creador = creador;
         usuariosInscritos = new ArrayList<>();
-        listaEspera = new LinkedList<>();
+        listaEspera = new TreeMap<>();
     }
 
     /**
@@ -172,7 +177,7 @@ public class Evento {
 
     public void anadirListaEspera(Usuario usuario) {
         
-        listaEspera.add(usuario);
+        listaEspera.put(new Date(),usuario);
         usuario.anadirEnEspera(this);
     }
 
@@ -206,14 +211,14 @@ public class Evento {
     /**
      * @return the listaEspera
      */
-    public List<Usuario> getListaEspera() {
+    public Map<Date,Usuario> getListaEspera() {
         return listaEspera;
     }
 
     /**
      * @param listaEspera the listaEspera to set
      */
-    public void setListaEspera(LinkedList<Usuario> listaEspera) {
+    public void setListaEspera(Map<Date,Usuario> listaEspera) {
         this.listaEspera = listaEspera;
     }
 

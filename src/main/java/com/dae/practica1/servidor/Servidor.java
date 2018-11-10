@@ -8,9 +8,12 @@ import com.dae.practica1.servicios.UsuarioService;
 import com.dae.practica1.servicios.UsuarioServiceImp;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ImportResource;
+
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -24,21 +27,10 @@ import org.springframework.context.annotation.ImportResource;
  */
 
 @SpringBootApplication(scanBasePackages="com.dae.practica1")
-
+@EntityScan(basePackages="com.dae.practica1.servicios")
 public class Servidor {
-//    
-//    @Bean
-//    UsuarioService UsuarioService(){
-//        UsuarioServiceImp servicio = new UsuarioServiceImp();
-//        return servicio;
-//    }
-//    
-//    @Bean
-//    EventoService EventoService(){
-//        EventoServiceImp servicioEventos = new EventoServiceImp();
-//        return servicioEventos;
-//    }
-//    
+    
+    
     public static void main(String[] args) throws Exception{
         SpringApplication servidor = new SpringApplication(Servidor.class);
         ApplicationContext contexto = servidor.run(args);
