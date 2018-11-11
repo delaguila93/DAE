@@ -29,15 +29,16 @@ public class EventoServiceImp implements EventoService {
     @Autowired
     private EventoDAO eventoDAO;
     
+   
+    
     public EventoServiceImp() {
         eventos = new TreeMap<>();
-        eventos.put("Micasa", new Evento(idEvento++, "Micasa", "Andujar", "Charla", "Hambre mucha hambre", new Date(), 1, new Usuario()));
+        //eventos.put("Micasa", new Evento(idEvento++, "Micasa", "Andujar", "Charla", "Hambre mucha hambre", new Date(), 1, new Usuario()));
         tiposEvento = new ArrayList<>(4);
         for (int i = 0; i < 4; ++i) {
             tiposEvento.add(new ArrayList<>());
         }
         tiposEvento.get(0).add("Micasa");
-        
     }
     
     @Override
@@ -48,11 +49,10 @@ public class EventoServiceImp implements EventoService {
     @Override
     public void CreaEvento(String titulo, String lugar, Date fecha, String tipo, String descripcion, int aforo, int token) throws EventoNoCreadoException {
         Usuario u = usuarios.devuelveUsuario(token);
-        Evento e = new Evento(idEvento++, titulo, lugar, tipo, descripcion, fecha, aforo, u);
+        if(idEvento==0)idEvento=eventoDAO.ultimoID();
+        Evento e = new Evento(++idEvento, titulo, lugar, tipo, descripcion, fecha, aforo, u);
         if (usuarios.comprobarToken(token)) {
-            if (e != null) {
-                throw new EventoNoCreadoException();
-            } else {
+            
                 //eventos.put(titulo, new Evento(idEvento++, titulo, lugar, tipo, descripcion, fecha, aforo, u));
                 eventoDAO.CreaEvento(e);
                 eventoDAO.anadirInscritos(idEvento, token);
@@ -71,7 +71,7 @@ public class EventoServiceImp implements EventoService {
                         tiposEvento.get(3).add(titulo);
                         break;
                 }*/
-            }
+            
         } else {
             throw new EventoNoCreadoException();
         }

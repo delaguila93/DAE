@@ -37,7 +37,7 @@ public class Cliente {
 
     public void registrarUsuario(UsuarioService servicioUsusario) throws ParseException {
         Scanner scanner = new Scanner(System.in);
-        DateFormat format = new SimpleDateFormat("DD/MM/YYYY");
+        DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 
         System.out.print("Introduce un nombre de usuario: ");
         String usuario = scanner.nextLine();
@@ -63,7 +63,7 @@ public class Cliente {
 
     public void crearEvento(EventoService servicioEvento, Usuario usuario, UsuarioService servicioUsuario) throws ParseException {
         Scanner scanner = new Scanner(System.in);
-        DateFormat format = new SimpleDateFormat("DD/MM/YYYY");
+        DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 
         System.out.print("Introduce un titulo: ");
         String titulo = scanner.nextLine();
@@ -108,7 +108,7 @@ public class Cliente {
             System.out.println("Día:" + e.getFecha().toString());
             System.out.println("Tipo: " + e.getTipo());
             System.out.println("Descripcion: " + e.getDescripcion());
-            System.out.println("Aforo restante: " + (e.getAforo() - e.getUsuariosInscritos().size()));
+//            System.out.println("Aforo restante: " + (e.getAforo() - e.getUsuariosInscritos().size()));
         }
 
     }

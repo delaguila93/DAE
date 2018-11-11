@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -35,7 +36,7 @@ public class Usuario {
     @Temporal(TemporalType.DATE)
     private Date fNac;
 
-    @OneToMany(mappedBy = "creador")
+    @OneToMany(mappedBy = "creador",fetch=FetchType.LAZY)    
     private List<Evento> eventosCreados;
 
     @ManyToMany

@@ -32,7 +32,7 @@ public class UsuarioDAO {
 
     public Usuario DevuelveUsuario(String usuario) {
         Usuario usu = em.createQuery(
-                "select * from Usuario u WHERE u.usuario=usuario",
+                "select u from Usuario u WHERE u.usuario=?1",
                 Usuario.class).setParameter(1, usuario)
                 .getSingleResult();
         return usu;
@@ -40,7 +40,7 @@ public class UsuarioDAO {
 
     public List<Evento> EventosInscritos(int token) {
         List<Evento> eventosInscritos = em.createQuery(
-                "select e.* from usuario_eventos_inscritos uei ,Evento e WHERE uei.usuarios_inscritos_id_usuario=token",
+                "select e from usuario_eventos_inscritos uei ,Evento e WHERE uei.usuarios_inscritos_id_usuario=?1",
                 Evento.class)
                 .setParameter(1, token)
                 .getResultList();
@@ -49,7 +49,7 @@ public class UsuarioDAO {
 
     public List<Evento> EventosEsperando(int token) {
         List<Evento> eventosEsperando = em.createQuery(
-                "select e.* from usuario_eventos_esperando uee ,Evento e WHERE uee.lista_espera_id_usuario=token",
+                "select e from usuario_eventos_esperando uee ,Evento e WHERE uee.lista_espera_id_usuario=?1",
                 Evento.class)
                 .setParameter(1, token)
                 .getResultList();
@@ -58,7 +58,7 @@ public class UsuarioDAO {
 
     public List<Evento> EventosCreados(int token) {
         List<Evento> eventosCreados = em.createQuery(
-                "select e.* from Evento e WHERE e.creador=token",
+                "select e from Evento e WHERE e.creador=?1",
                 Evento.class)
                 .setParameter(1, token)
                 .getResultList();

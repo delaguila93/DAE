@@ -26,7 +26,6 @@ import javax.persistence.TemporalType;
 public class Evento {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.SEQUENCE)
     private int idEvento;
     private String titulo, lugar, tipo, descripcion;
     @Temporal(TemporalType.DATE)
