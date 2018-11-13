@@ -12,13 +12,14 @@ import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import static java.lang.Math.toIntExact;
+import org.springframework.transaction.annotation.Propagation;
 
 /**
  *
  * @author delag
  */
 @Repository
-@Transactional
+@Transactional(propagation=Propagation.SUPPORTS)
 
 public class EventoDAO {
 
@@ -31,8 +32,10 @@ public class EventoDAO {
 
     public void CreaEvento(Evento e) {
         em.persist(e);
+
     }
 
+    @Transactional(readOnly = true)
     public List<Evento> eventosCreados() {
         List<Evento> eventosCreados = em.createQuery(
                 "select e from Evento e",
@@ -49,7 +52,7 @@ public class EventoDAO {
 
     public Evento BuscaTitulo(String cadena) {
         Evento e = em.createQuery(
-                "select e from Evento e WHERE e.tipo=?1 OR e.titulo LIKE '%cadena%' OR e.descripcion LIKE '%cadena%'",
+                "select e from Evento e WHERE  e.titulo=?1",
                 Evento.class).setParameter(1, cadena).getSingleResult();
         return e;
     }
@@ -61,10 +64,11 @@ public class EventoDAO {
         return inscritos;
     }
 
-    public int ultimoID(){
-        int id= toIntExact((long)em.createQuery("Select COUNT(e.idEvento) From Evento e").getSingleResult());
+    public int ultimoID() {
+        int id = toIntExact((long) em.createQuery("Select COUNT(e.idEvento) From Evento e").getSingleResult());
         return id;
     }
+
     public int obtenerAforo(String titulo) {
         int aforo = em.createQuery("SELECT aforo FROM Evento e WHERE e.titulotitulo=?1")
                 .setParameter(1, titulo)
@@ -72,14 +76,19 @@ public class EventoDAO {
         return aforo;
     }
 
-    public void anadirInscritos(int idEvento,int idUsuario){
-                em.createNativeQuery("INSERT INTO usuario_evento_inscritos(usuarios_inscritos_id_usuario,eventos_inscritos_id_evento) VALUES (?1,?2)")
-                .setParameter(1, idUsuario)
-                .setParameter(2, idEvento);
+    @Transactional(propagation=Propagation.REQUIRED,
+            rollbackFor=EventoNoCreadoException.class)
+    public void anadirInscritos(int idEvento, int idUsuario) {
+        em.getTransaction().begin();
+        Usuario u = em.find(Usuario.class, idUsuario);
+        Evento e = em.find(Evento.class, idEvento);
+        u.anadirEventoInscrito(e);
+        e.inscribirUsuario(u);
+        em.merge(e);
     }
-    
+
     public void anadirListaEspera(int idEvento, int idUsuario) {
-        Date fecha=new Date();
+        Date fecha = new Date();
         em.createNativeQuery("INSERT INTO usuario_evento_esperando(lista_espera_id_usuario,eventos_esperando_id_evento,lista_espera_key) VALUES (?1,?2,?3)")
                 .setParameter(1, idUsuario)
                 .setParameter(2, idEvento)
@@ -89,14 +98,15 @@ public class EventoDAO {
     public void BorraEvento(Evento e) {
         em.remove(em.merge(e));
     }
-    
-    public void borraListaEspera(int idEvento){
+
+    public void borraListaEspera(int idEvento) {
         em.createQuery("DELETE FROM usuario_evento_esperando WHERE eventos_esperando_id_evento=idEvento ")
-                .setParameter(1,idEvento);
+                .setParameter(1, idEvento);
     }
-        public void borraListaInscritos(int idEvento){
+
+    public void borraListaInscritos(int idEvento) {
         em.createQuery("DELETE FROM usuario_evento_inscritos WHERE eventos_inscritos_id_evento=idEvento ")
-                .setParameter(1,idEvento);
+                .setParameter(1, idEvento);
     }
 
 }

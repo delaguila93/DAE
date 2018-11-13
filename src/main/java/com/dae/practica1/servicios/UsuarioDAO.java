@@ -38,15 +38,17 @@ public class UsuarioDAO {
         return usu;
     }
 
+    @Transactional(readOnly = true)
     public List<Evento> EventosInscritos(int token) {
         List<Evento> eventosInscritos = em.createQuery(
-                "select e from usuario_eventos_inscritos uei ,Evento e WHERE uei.usuarios_inscritos_id_usuario=?1",
+                "select e FROM Evento e INNER JOIN e.idEvento eventosInscritos WHERE eventosInscritos.idUsuario =?1",
                 Evento.class)
                 .setParameter(1, token)
                 .getResultList();
         return eventosInscritos;
     }
 
+    @Transactional(readOnly = true)
     public List<Evento> EventosEsperando(int token) {
         List<Evento> eventosEsperando = em.createQuery(
                 "select e from usuario_eventos_esperando uee ,Evento e WHERE uee.lista_espera_id_usuario=?1",
@@ -56,6 +58,7 @@ public class UsuarioDAO {
         return eventosEsperando;
     }
 
+    @Transactional(readOnly = true)
     public List<Evento> EventosCreados(int token) {
         List<Evento> eventosCreados = em.createQuery(
                 "select e from Evento e WHERE e.creador=?1",

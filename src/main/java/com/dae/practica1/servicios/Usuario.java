@@ -21,6 +21,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import static javax.persistence.TemporalType.DATE;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 /**
  *
@@ -36,7 +38,8 @@ public class Usuario {
     @Temporal(TemporalType.DATE)
     private Date fNac;
 
-    @OneToMany(mappedBy = "creador",fetch=FetchType.LAZY)    
+    @OneToMany(mappedBy = "creador")
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<Evento> eventosCreados;
 
     @ManyToMany

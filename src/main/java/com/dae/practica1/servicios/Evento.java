@@ -7,10 +7,12 @@ package com.dae.practica1.servicios;
 
 import java.util.*;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -33,13 +35,13 @@ public class Evento {
     private int aforo;
 
     @ManyToOne
-    @JoinColumn(name="creador")
+    @JoinColumn(name = "creador")
     private Usuario creador;
-    
-    @ManyToMany(mappedBy="eventosInscritos")
+
+    @ManyToMany(mappedBy="eventosInscritos",fetch=FetchType.LAZY)
     private List<Usuario> usuariosInscritos;
-    @ManyToMany(mappedBy="eventosEsperando")
-    private Map<Date,Usuario> listaEspera;
+    @ManyToMany(mappedBy = "eventosEsperando")
+    private Map<Date, Usuario> listaEspera;
 
     public Evento() {
         this.idEvento = -1;
@@ -175,8 +177,8 @@ public class Evento {
     }
 
     public void anadirListaEspera(Usuario usuario) {
-        
-        listaEspera.put(new Date(),usuario);
+
+        listaEspera.put(new Date(), usuario);
         usuario.anadirEnEspera(this);
     }
 
@@ -201,7 +203,7 @@ public class Evento {
     public void borraUsusario(Usuario usuario) {
         usuariosInscritos.remove(usuario);
         if (listaEspera.size() > 0) {
-            usuariosInscritos.add(listaEspera.remove(0));       
+            usuariosInscritos.add(listaEspera.remove(0));
         }
         usuariosInscritos.get(usuariosInscritos.size() - 1).anadirEventoInscrito(this);
         usuariosInscritos.get(usuariosInscritos.size() - 1).quitarEspera(this);
@@ -210,14 +212,14 @@ public class Evento {
     /**
      * @return the listaEspera
      */
-    public Map<Date,Usuario> getListaEspera() {
+    public Map<Date, Usuario> getListaEspera() {
         return listaEspera;
     }
 
     /**
      * @param listaEspera the listaEspera to set
      */
-    public void setListaEspera(Map<Date,Usuario> listaEspera) {
+    public void setListaEspera(Map<Date, Usuario> listaEspera) {
         this.listaEspera = listaEspera;
     }
 
