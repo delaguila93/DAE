@@ -52,9 +52,7 @@ public class EventoServiceImp implements EventoService {
         }
         Evento e = new Evento(++idEvento, titulo, lugar, tipo, descripcion, fecha, aforo, u);
         if (usuarios.comprobarToken(token)) {
-
-            eventoDAO.CreaEvento(e);
-            eventoDAO.anadirInscritos(idEvento, token);     
+            eventoDAO.CreaEvento(e,token);   
         } else {
             throw new EventoNoCreadoException();
         }

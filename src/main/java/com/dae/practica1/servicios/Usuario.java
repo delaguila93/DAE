@@ -39,11 +39,13 @@ public class Usuario {
     private Date fNac;
 
     @OneToMany(mappedBy = "creador")
-    @LazyCollection(LazyCollectionOption.FALSE)
+    //@LazyCollection(LazyCollectionOption.FALSE)
     private List<Evento> eventosCreados;
 
     @ManyToMany
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<Evento> eventosInscritos;
+    
     @ManyToMany
     private List<Evento> eventosEsperando;
 

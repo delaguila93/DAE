@@ -40,32 +40,17 @@ public class UsuarioDAO {
 
     @Transactional(readOnly = true)
     public List<Evento> EventosInscritos(int token) {
-        List<Evento> eventosInscritos = em.createQuery(
-                "select e FROM Evento e INNER JOIN e.idEvento eventosInscritos WHERE eventosInscritos.idUsuario =?1",
-                Evento.class)
-                .setParameter(1, token)
-                .getResultList();
-        return eventosInscritos;
+        return em.find(Usuario.class, token).getEventosInscritos();
     }
 
     @Transactional(readOnly = true)
     public List<Evento> EventosEsperando(int token) {
-        List<Evento> eventosEsperando = em.createQuery(
-                "select e from usuario_eventos_esperando uee ,Evento e WHERE uee.lista_espera_id_usuario=?1",
-                Evento.class)
-                .setParameter(1, token)
-                .getResultList();
-        return eventosEsperando;
+        return em.find(Usuario.class, token).getEventosEsperando();
     }
 
     @Transactional(readOnly = true)
     public List<Evento> EventosCreados(int token) {
-        List<Evento> eventosCreados = em.createQuery(
-                "select e from Evento e WHERE e.creador=?1",
-                Evento.class)
-                .setParameter(1, token)
-                .getResultList();
-        return eventosCreados;
+        return em.find(Usuario.class, token).getEventosCreados();
     }
 
 }

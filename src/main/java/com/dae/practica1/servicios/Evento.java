@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -38,8 +39,9 @@ public class Evento {
     @JoinColumn(name = "creador")
     private Usuario creador;
 
-    @ManyToMany(mappedBy="eventosInscritos",fetch=FetchType.LAZY)
+    @ManyToMany(mappedBy="eventosInscritos")
     private List<Usuario> usuariosInscritos;
+    
     @ManyToMany(mappedBy = "eventosEsperando")
     private Map<Date, Usuario> listaEspera;
 

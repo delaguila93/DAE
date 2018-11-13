@@ -30,9 +30,11 @@ public class EventoDAO {
         return em.find(Evento.class, idEvento);
     }
 
-    public void CreaEvento(Evento e) {
+    @Transactional
+    public void CreaEvento(Evento e,int token) {     
+        Usuario u = em.find(Usuario.class, token);
+        e.inscribirUsuario(u);
         em.persist(e);
-
     }
 
     @Transactional(readOnly = true)
