@@ -19,8 +19,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class EventoServiceImp implements EventoService {
 
-    private Map<String, Evento> eventos;
-    private List<List<String>> tiposEvento;//pos 0= charla, pos 1 =curso,pos 2= actividad deportiva, pos 3=visita cultiral.
+
     private int idEvento = 0;
 
     @Autowired
@@ -30,12 +29,7 @@ public class EventoServiceImp implements EventoService {
     private EventoDAO eventoDAO;
 
     public EventoServiceImp() {
-        eventos = new TreeMap<>();
-        tiposEvento = new ArrayList<>(4);
-        for (int i = 0; i < 4; ++i) {
-            tiposEvento.add(new ArrayList<>());
-        }
-        tiposEvento.get(0).add("Micasa");
+
     }
 
     @Override
