@@ -36,19 +36,6 @@ import org.springframework.core.io.ClassPathResource;
 @EnableCaching
 public class Servidor {
 
-    @Bean
-    CacheManager cacheManager() {
-        return new EhCacheCacheManager(ehCacheCacheManager().getObject());
-    }
-
-    @Bean
-    public EhCacheManagerFactoryBean ehCacheCacheManager() {
-        EhCacheManagerFactoryBean cmfb = new EhCacheManagerFactoryBean();
-        cmfb.setConfigLocation(new ClassPathResource("ehcache.xml"));
-        cmfb.setShared(true);
-        return cmfb;
-    }
-
     public static void main(String[] args) throws Exception {
         SpringApplication servidor = new SpringApplication(Servidor.class);
         ApplicationContext contexto = servidor.run(args);
