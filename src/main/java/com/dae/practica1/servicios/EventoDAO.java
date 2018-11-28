@@ -12,6 +12,7 @@ import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import static java.lang.Math.toIntExact;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Propagation;
 
 /**
@@ -19,7 +20,7 @@ import org.springframework.transaction.annotation.Propagation;
  * @author delag
  */
 @Repository
-@Transactional(propagation=Propagation.SUPPORTS)
+@Transactional(propagation = Propagation.SUPPORTS)
 
 public class EventoDAO {
 
@@ -31,7 +32,7 @@ public class EventoDAO {
     }
 
     @Transactional
-    public void CreaEvento(Evento e,int token) {     
+    public void CreaEvento(Evento e, int token) {
         Usuario u = em.find(Usuario.class, token);
         e.inscribirUsuario(u);
         em.persist(e);
@@ -45,6 +46,7 @@ public class EventoDAO {
         return eventosCreados;
     }
 
+
     public List<Evento> BuscaEvento(String cadena) {
         List<Evento> eventosTipo = em.createQuery(
                 "select e from Evento e WHERE e.tipo=?1 OR e.titulo LIKE '%?1%' OR e.descripcion LIKE '%?1%'",
@@ -52,6 +54,7 @@ public class EventoDAO {
         return eventosTipo;
     }
 
+    @Cacheable(value="eventosTitulo")
     public Evento BuscaTitulo(String cadena) {
         Evento e = em.createQuery(
                 "select e from Evento e WHERE  e.titulo=?1",
@@ -59,27 +62,13 @@ public class EventoDAO {
         return e;
     }
 
-    public int obtenerInscritos(String titulo) {
-        int inscritos = em.createQuery("SELECT COUNT(uei.usuarios_inscritos_id_usuario) FROM usuario_evento_inscritos uei,Evento e WHERE e.idEvento=uei.eventos_inscritos AND e.titulo=?1")
-                .setParameter(1, titulo)
-                .getFirstResult();
-        return inscritos;
-    }
-
     public int ultimoID() {
         int id = toIntExact((long) em.createQuery("Select COUNT(e.idEvento) From Evento e").getSingleResult());
         return id;
     }
 
-    public int obtenerAforo(String titulo) {
-        int aforo = em.createQuery("SELECT aforo FROM Evento e WHERE e.titulotitulo=?1")
-                .setParameter(1, titulo)
-                .getFirstResult();
-        return aforo;
-    }
-
-    @Transactional(propagation=Propagation.REQUIRED,
-            rollbackFor=EventoNoCreadoException.class)
+    @Transactional(propagation = Propagation.REQUIRED,
+            rollbackFor = EventoNoCreadoException.class)
     public void anadirInscritos(int idEvento, int idUsuario) {
         em.getTransaction().begin();
         Usuario u = em.find(Usuario.class, idUsuario);
@@ -87,28 +76,45 @@ public class EventoDAO {
         u.anadirEventoInscrito(e);
         e.inscribirUsuario(u);
         em.merge(e);
+     
+        
     }
 
+    @Transactional
     public void anadirListaEspera(int idEvento, int idUsuario) {
-        Date fecha = new Date();
-        em.createNativeQuery("INSERT INTO usuario_evento_esperando(lista_espera_id_usuario,eventos_esperando_id_evento,lista_espera_key) VALUES (?1,?2,?3)")
-                .setParameter(1, idUsuario)
-                .setParameter(2, idEvento)
-                .setParameter(3, fecha);
+         em.getTransaction().begin();
+        Usuario u = em.find(Usuario.class, idUsuario);
+        Evento e = em.find(Evento.class, idEvento);
+        e.anadirListaEspera(u);
+        em.merge(e);
+        em.merge(u);
     }
 
+    @Transactional
     public void BorraEvento(Evento e) {
+        Usuario creador = e.getCreador();
+        creador.eliminarEvento(e);
+        em.merge(creador);
+        for(Usuario u :e.getUsuariosInscritos()){
+            u.eliminarEvento(e);
+            em.merge(u);
+        }
+        for(Usuario u :e.getListaEspera()){
+            u.eliminarEvento(e);
+            em.merge(u);
+        }
+        e.cancelarEvento();
         em.remove(em.merge(e));
     }
 
-    public void borraListaEspera(int idEvento) {
-        em.createQuery("DELETE FROM usuario_evento_esperando WHERE eventos_esperando_id_evento=idEvento ")
-                .setParameter(1, idEvento);
+    @Transactional
+    public void cancelaUsuario(int idEvento,int idUsuario){
+        Usuario u = em.find(Usuario.class, idUsuario);
+        Evento e = em.find(Evento.class, idEvento);
+        e.borraUsusario(u);
+        u.eliminarEvento(e);
+        em.merge(e);
+        em.merge(u);
     }
-
-    public void borraListaInscritos(int idEvento) {
-        em.createQuery("DELETE FROM usuario_evento_inscritos WHERE eventos_inscritos_id_evento=idEvento ")
-                .setParameter(1, idEvento);
-    }
-
+    
 }

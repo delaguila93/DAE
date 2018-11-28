@@ -8,6 +8,8 @@ package com.dae.practica1.servicios;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -30,7 +32,7 @@ import org.hibernate.annotations.LazyCollectionOption;
  */
 @Entity
 @Table(name = "Usuario")
-public class Usuario {
+public class Usuario implements Comparable<Usuario> {
 
     @Id
     private int idUsuario;
@@ -39,15 +41,16 @@ public class Usuario {
     private Date fNac;
 
     @OneToMany(mappedBy = "creador")
-    //@LazyCollection(LazyCollectionOption.FALSE)
-    private List<Evento> eventosCreados;
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private Set<Evento> eventosCreados;
 
     @ManyToMany
     @LazyCollection(LazyCollectionOption.FALSE)
-    private List<Evento> eventosInscritos;
-    
+    private Set<Evento> eventosInscritos;
+
     @ManyToMany
-    private List<Evento> eventosEsperando;
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private Set<Evento> eventosEsperando;
 
     public Usuario() {
         this.idUsuario = -1;
@@ -55,9 +58,9 @@ public class Usuario {
         this.nombre = "";
         this.password = "";
         this.fNac = null;
-        eventosInscritos = new ArrayList<>();
-        eventosCreados = new ArrayList<>();
-        eventosEsperando = new ArrayList<>();
+        eventosInscritos = new TreeSet<>();
+        eventosCreados = new TreeSet<>();
+        eventosEsperando = new TreeSet<>();
     }
 
     public Usuario(int idUsuario, String usuario, String nombre, String password, Date fNac) {
@@ -67,9 +70,9 @@ public class Usuario {
         this.nombre = nombre;
         this.password = password;
         this.fNac = fNac;
-        eventosInscritos = new ArrayList<>();
-        eventosCreados = new ArrayList<>();
-        eventosEsperando = new ArrayList<>();
+        eventosInscritos = new TreeSet<>();
+        eventosCreados = new TreeSet<>();
+        eventosInscritos = new TreeSet<>();
     }
 
     /**
@@ -121,14 +124,14 @@ public class Usuario {
     /**
      * @return the eventosInscritos
      */
-    public List<Evento> getEventosInscritos() {
+    public Set<Evento> getEventosInscritos() {
         return eventosInscritos;
     }
 
     /**
      * @param eventosInscritos the eventosInscritos to set
      */
-    public void setEventosInscritos(List<Evento> eventosInscritos) {
+    public void setEventosInscritos(Set<Evento> eventosInscritos) {
         this.eventosInscritos = eventosInscritos;
     }
 
@@ -139,7 +142,7 @@ public class Usuario {
     /**
      * @return the eventosEsperando
      */
-    public List<Evento> getEventosEsperando() {
+    public Set<Evento> getEventosEsperando() {
         return eventosEsperando;
     }
 
@@ -154,14 +157,14 @@ public class Usuario {
     /**
      * @return the eventosCreados
      */
-    public List<Evento> getEventosCreados() {
+    public Set<Evento> getEventosCreados() {
         return eventosCreados;
     }
 
     /**
      * @param eventosCreados the eventosCreados to set
      */
-    public void setEventosCreados(List<Evento> eventosCreados) {
+    public void setEventosCreados(Set<Evento> eventosCreados) {
         this.eventosCreados = eventosCreados;
     }
 
@@ -173,6 +176,16 @@ public class Usuario {
         eventosInscritos.remove(e);
         eventosEsperando.remove(e);
         eventosCreados.remove(e);
+    }
+
+    @Override
+    public int compareTo(Usuario o) {
+        if( o.idUsuario > this.idUsuario) {
+            return 1;
+        }else if(o.idUsuario < this.idUsuario){
+            return -1;
+        }
+        return 0;
     }
 
 }

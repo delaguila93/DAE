@@ -9,6 +9,7 @@ import com.dae.practica1.servicios.Evento;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.springframework.stereotype.Component;
 
 
@@ -23,13 +24,13 @@ public interface UsuarioService {
     
     public int IdentificaUsuario(String usuario, String password);
     
-    public List<Evento> ListaEventosInscritos(int token);
+    public Set<Evento> ListaEventosInscritos(int token);
     
-    public List<Evento> ListaEventosCreados(int token );
+    public Set<Evento> ListaEventosCreados(int token );
     
     public Usuario devuelveUsuario(String usuario);
     
-    public List<Evento> ListaEventosEnEspera(int token);
+    public Set<Evento> ListaEventosEnEspera(int token);
     
     public boolean comprobarToken(int token);
     

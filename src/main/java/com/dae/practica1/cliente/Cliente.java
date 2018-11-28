@@ -152,12 +152,13 @@ public class Cliente {
         Scanner scanner = new Scanner(System.in);
         String titulo;
 
-        for (Map.Entry<String, Evento> salida : servicioEvento.eventosCreados().entrySet()) {
+        for (Evento salida : servicioEvento.eventosCreados()) {
             System.out.println("------");
-            System.out.println("Titulo evento: " + salida.getValue().getTitulo());
-            System.out.println("descripcion: " + salida.getValue().getDescripcion());
-            System.out.println("Fecha: " + salida.getValue().getFecha().toString());
-            System.out.println("Tipo de evento: " + salida.getValue().getTipo());
+            System.out.println("Titulo evento: " + salida.getTitulo());
+            System.out.println("descripcion: " + salida.getDescripcion());
+            System.out.println("Fecha: " + salida.getFecha().toString());
+            System.out.println("Tipo de evento: " + salida.getTipo());
+            System.out.println("Aforo: " + salida.getAforo());
         }
 
         System.out.print("Introduce el titulo del evento: ");

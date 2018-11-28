@@ -6,6 +6,7 @@
 package com.dae.practica1.servicios;
 
 import java.util.List;
+import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
@@ -39,17 +40,17 @@ public class UsuarioDAO {
     }
 
     @Transactional(readOnly = true)
-    public List<Evento> EventosInscritos(int token) {
+    public Set<Evento> EventosInscritos(int token) {
         return em.find(Usuario.class, token).getEventosInscritos();
     }
 
     @Transactional(readOnly = true)
-    public List<Evento> EventosEsperando(int token) {
+    public Set<Evento> EventosEsperando(int token) {
         return em.find(Usuario.class, token).getEventosEsperando();
     }
 
     @Transactional(readOnly = true)
-    public List<Evento> EventosCreados(int token) {
+    public Set<Evento> EventosCreados(int token) {
         return em.find(Usuario.class, token).getEventosCreados();
     }
 

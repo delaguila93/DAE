@@ -27,7 +27,7 @@ public interface EventoService {
     
     public void CancelaUsuario(String titulo,int token);
     
-    public Map<String,Evento> eventosCreados();
+    public List<Evento> eventosCreados();
     
     
 }

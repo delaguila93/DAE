@@ -31,7 +31,6 @@ public class EventoServiceImp implements EventoService {
 
     public EventoServiceImp() {
         eventos = new TreeMap<>();
-        //eventos.put("Micasa", new Evento(idEvento++, "Micasa", "Andujar", "Charla", "Hambre mucha hambre", new Date(), 1, new Usuario()));
         tiposEvento = new ArrayList<>(4);
         for (int i = 0; i < 4; ++i) {
             tiposEvento.add(new ArrayList<>());
@@ -63,8 +62,6 @@ public class EventoServiceImp implements EventoService {
     public void BorraEvento(String titulo, int token) throws EventoNoEncontradoException {
         Evento e = eventoDAO.BuscaTitulo(titulo);
         if (usuarios.comprobarToken(token)) {
-            eventoDAO.borraListaEspera(e.getIdEvento());
-            eventoDAO.borraListaInscritos(e.getIdEvento());
             eventoDAO.BorraEvento(e);
         } else {
             throw new EventoNoEncontradoException();
@@ -75,8 +72,8 @@ public class EventoServiceImp implements EventoService {
     public boolean InscribeUsuario(Usuario usuario, String titulo) {
 
         Evento e = eventoDAO.BuscaTitulo(titulo);
-        if (eventoDAO.obtenerAforo(titulo) == eventoDAO.obtenerInscritos(titulo)) {
-            eventoDAO.anadirListaEspera(e.getIdEvento(), idEvento);
+        if (e.getAforo() == e.tamListaInscritos()) {
+            eventoDAO.anadirListaEspera(e.getIdEvento(), usuario.getIdUsuario());
             return false;
         }
         e.inscribirUsuario(usuario);
@@ -86,14 +83,16 @@ public class EventoServiceImp implements EventoService {
 
     @Override
     public void CancelaUsuario(String titulo, int token) {
+        Evento e =eventoDAO.BuscaTitulo(titulo);
         if (usuarios.comprobarToken(token)) {
-            eventos.get(titulo).borraUsusario(usuarios.devuelveUsuario(token));
+            eventoDAO.cancelaUsuario(e.getIdEvento(), token);
+
         }
     }
 
     @Override
-    public Map<String, Evento> eventosCreados() {
-        return eventos;
+    public List<Evento> eventosCreados() {
+        return eventoDAO.eventosCreados();
     }
 
 }

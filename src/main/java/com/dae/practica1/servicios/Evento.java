@@ -19,6 +19,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 /**
  *
@@ -39,11 +41,13 @@ public class Evento {
     @JoinColumn(name = "creador")
     private Usuario creador;
 
-    @ManyToMany(mappedBy="eventosInscritos")
-    private List<Usuario> usuariosInscritos;
-    
+    @ManyToMany(mappedBy = "eventosInscritos")
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private Set<Usuario> usuariosInscritos;
+
     @ManyToMany(mappedBy = "eventosEsperando")
-    private Map<Date, Usuario> listaEspera;
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private Set< Usuario> listaEspera;
 
     public Evento() {
         this.idEvento = -1;
@@ -54,8 +58,8 @@ public class Evento {
         this.fecha = null;
         this.aforo = -1;
         this.creador = null;
-        usuariosInscritos = new ArrayList<>();
-        listaEspera = new TreeMap<>();
+        usuariosInscritos = new TreeSet<>();
+        listaEspera = new TreeSet<>();
     }
 
     public Evento(int idEvento, String titulo, String lugar, String tipo, String descripcion, Date fecha, int aforo, Usuario creador) {
@@ -67,8 +71,8 @@ public class Evento {
         this.fecha = fecha;
         this.aforo = aforo;
         this.creador = creador;
-        usuariosInscritos = new ArrayList<>();
-        listaEspera = new TreeMap<>();
+        usuariosInscritos = new TreeSet<>();
+        listaEspera = new TreeSet<>();
     }
 
     /**
@@ -170,7 +174,7 @@ public class Evento {
     }
 
     public void inscribirUsuario(Usuario usuario) {
-        usuariosInscritos.add(usuario);
+        usuariosInscritos.add(usuario);//  Exception in thread "main" java.lang.ClassCastException: com.dae.practica1.servicios.Usuario cannot be cast to java.lang.Comparable
         usuario.anadirEventoInscrito(this);
     }
 
@@ -179,22 +183,21 @@ public class Evento {
     }
 
     public void anadirListaEspera(Usuario usuario) {
-
-        listaEspera.put(new Date(), usuario);
+        listaEspera.add(usuario);
         usuario.anadirEnEspera(this);
     }
 
     /**
      * @return the usuariosInscritos
      */
-    public List<Usuario> getUsuariosInscritos() {
+    public Set<Usuario> getUsuariosInscritos() {
         return usuariosInscritos;
     }
 
     /**
      * @param usuariosInscritos the usuariosInscritos to set
      */
-    public void setUsuariosInscritos(ArrayList<Usuario> usuariosInscritos) {
+    public void setUsuariosInscritos(Set<Usuario> usuariosInscritos) {
         this.usuariosInscritos = usuariosInscritos;
     }
 
@@ -205,23 +208,25 @@ public class Evento {
     public void borraUsusario(Usuario usuario) {
         usuariosInscritos.remove(usuario);
         if (listaEspera.size() > 0) {
-            usuariosInscritos.add(listaEspera.remove(0));
+            Usuario u=listaEspera.iterator().next();
+            listaEspera.remove(u);
+            usuariosInscritos.add(u);
+            u.anadirEventoInscrito(this);
+            u.quitarEspera(this);
         }
-        usuariosInscritos.get(usuariosInscritos.size() - 1).anadirEventoInscrito(this);
-        usuariosInscritos.get(usuariosInscritos.size() - 1).quitarEspera(this);
     }
 
     /**
      * @return the listaEspera
      */
-    public Map<Date, Usuario> getListaEspera() {
+    public Set< Usuario> getListaEspera() {
         return listaEspera;
     }
 
     /**
      * @param listaEspera the listaEspera to set
      */
-    public void setListaEspera(Map<Date, Usuario> listaEspera) {
+    public void setListaEspera(Set< Usuario> listaEspera) {
         this.listaEspera = listaEspera;
     }
 
@@ -237,5 +242,11 @@ public class Evento {
      */
     public void setCreador(Usuario creador) {
         this.creador = creador;
+    }
+    
+    public void cancelarEvento(){
+        this.creador = null;
+        this.usuariosInscritos.removeAll(usuariosInscritos);
+        this.listaEspera.removeAll(listaEspera);
     }
 }

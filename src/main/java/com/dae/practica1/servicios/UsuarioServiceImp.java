@@ -81,7 +81,7 @@ public class UsuarioServiceImp implements UsuarioService {
     }
 
     @Override
-    public List<Evento> ListaEventosInscritos(int token) {
+    public Set<Evento> ListaEventosInscritos(int token) {
         if (comprobarToken(token)) {
             return usuarioDAO.EventosInscritos(token);
         }
@@ -89,7 +89,7 @@ public class UsuarioServiceImp implements UsuarioService {
     }
 
     @Override
-    public List<Evento> ListaEventosCreados(int token) {
+    public Set<Evento> ListaEventosCreados(int token) {
         if (comprobarToken(token)) {
             return usuarioDAO.EventosCreados(token);
         }
@@ -102,7 +102,7 @@ public class UsuarioServiceImp implements UsuarioService {
     }
 
     @Override
-    public List<Evento> ListaEventosEnEspera(int token) {
+    public Set<Evento> ListaEventosEnEspera(int token) {
         if (comprobarToken(token)) {
             return usuarioDAO.EventosEsperando(token);
         }
