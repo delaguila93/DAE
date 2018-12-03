@@ -26,6 +26,7 @@ import org.springframework.stereotype.Component;
 public class UsuarioServiceImp implements UsuarioService {
 
     private Set<Integer> tokenCreados;
+    private Map<String, Usuario> usuarios;
     private Map<Integer, String> identificados;
     private int idUsuario = 0;
 
@@ -33,8 +34,10 @@ public class UsuarioServiceImp implements UsuarioService {
     private UsuarioDAO usuarioDAO;
     
     public UsuarioServiceImp() {
+        usuarios = new TreeMap<>();
         identificados = new TreeMap<>();
         tokenCreados = new TreeSet<>();
+        usuarios.put("yosiph", new Usuario(++idUsuario, "yosiph", "yosiph", "Jose", new Date()));
         identificados.put(idUsuario, "yosiph");
 
     }
