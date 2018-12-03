@@ -31,11 +31,12 @@ public class UsuarioDAO {
         em.persist(u);
     }
 
-    public Usuario DevuelveUsuario(String usuario) {
+    public Usuario DevuelveUsuario(String usuario) throws UsuarioNoCreadoException {
         Usuario usu = em.createQuery(
                 "select u from Usuario u WHERE u.usuario=?1",
                 Usuario.class).setParameter(1, usuario)
                 .getSingleResult();
+        if(usu==null)throw new UsuarioNoCreadoException();
         return usu;
     }
 
