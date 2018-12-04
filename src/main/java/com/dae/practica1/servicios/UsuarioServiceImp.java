@@ -3,7 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
+
 package com.dae.practica1.servicios;
+
+
 
 import java.util.Date;
 import java.util.List;
@@ -12,11 +16,8 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 /**
  *
  * @author macosx
@@ -31,7 +32,7 @@ public class UsuarioServiceImp implements UsuarioService {
 
     @Autowired
     private UsuarioDAO usuarioDAO;
-
+    
     public UsuarioServiceImp() {
         usuarios = new TreeMap<>();
         identificados = new TreeMap<>();
@@ -52,16 +53,15 @@ public class UsuarioServiceImp implements UsuarioService {
     }
 
     @Override
-    public void RegistraUsuario(String usuario, String password, String nombre, Date fNac) throws UsuarioNoCreadoException {
-        if (usuario.length() > 1 && password.length() > 3 && nombre.length() > 2) {
-            try {
-                idUsuario = GenerarToken();
-                Usuario aux = new Usuario(idUsuario, usuario, nombre, password, fNac);
-                usuarioDAO.RegistraUsuario(aux);
-            } catch (NullPointerException e) {
-                throw new UsuarioNoCreadoException();
-            }
-        } else {
+    public void RegistraUsuario(String usuario, String password, String nombre, Date fNac) throws UsuarioNoCreadoException{
+        if(usuario.length() > 1 && password.length() > 3 && nombre.length() > 2){
+        try {
+            idUsuario = GenerarToken();
+            Usuario aux = new Usuario(idUsuario, usuario, nombre, password, fNac);
+            usuarioDAO.RegistraUsuario(aux);
+        } catch (NullPointerException e) {
+            throw new UsuarioNoCreadoException();
+        }}else{
             throw new UsuarioNoCreadoException();
         }
 
@@ -70,20 +70,14 @@ public class UsuarioServiceImp implements UsuarioService {
     @Override
     public int IdentificaUsuario(String usuario, String password) {
         int identificado = -1;
-        Usuario u;
-        try {
-            u = usuarioDAO.DevuelveUsuario(usuario);
-            if (u != null) {
-                if (u.getPassword().equals(password)) {
-                    identificado = u.getIdUsuario();
-                    identificados.put(identificado, usuario);
-                }
+        Usuario u = usuarioDAO.DevuelveUsuario(usuario);
+        if (u != null) {
+            if (u.getPassword().equals(password)) {
+                identificado = u.getIdUsuario();
+                identificados.put(identificado, usuario);
             }
-        } finally{
-
-        return identificado;
         }
-        
+        return identificado;
     }
 
     @Override
@@ -104,12 +98,7 @@ public class UsuarioServiceImp implements UsuarioService {
 
     @Override
     public Usuario devuelveUsuario(String usuario) {
-        try {
-            return usuarioDAO.DevuelveUsuario(usuario);
-        } catch (UsuarioNoCreadoException ex) {
-            Logger.getLogger(UsuarioServiceImp.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
+        return usuarioDAO.DevuelveUsuario(usuario);
     }
 
     @Override
