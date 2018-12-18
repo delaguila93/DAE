@@ -5,10 +5,12 @@
  */
 package com.dae.practica1.servicios;
 
-import java.util.Date;
+
 import java.util.List;
-import java.util.Map;
+
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  *
@@ -17,17 +19,17 @@ import org.springframework.stereotype.Component;
 @Component("eventoService")
 public interface EventoService {
     
-    public List<Evento> BuscaEvento(String busqueda);
+    public List<EventoDTO> BuscaEvento(String busqueda);
     
-    public void CreaEvento(String titulo, String lugar, Date fecha, String tipo, String decripcion, int aforo,int token) throws EventoNoCreadoException;
+    public void CreaEvento(@RequestBody EventoDTO e,@PathVariable("usuario") String usuario) throws EventoNoCreadoException;
     
-    public void BorraEvento(String titulo,int token) throws EventoNoEncontradoException;
+    public void BorraEvento(@PathVariable ("titulo")String titulo,@PathVariable ("usuario")String usuario) throws EventoNoEncontradoException;
     
-    public boolean InscribeUsuario(Usuario usuario,String titulo);
+    public boolean InscribeUsuario(@PathVariable("titulo") String titulo, @PathVariable ("usuario")String usuario);
     
-    public void CancelaUsuario(String titulo,int token);
+    public void CancelaUsuario(@PathVariable ("titulo")String titulo,@PathVariable ("usuario")String usuario);
     
-    public List<Evento> eventosCreados();
+    public List<EventoDTO> eventosCreados();
     
     
 }

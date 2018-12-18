@@ -5,6 +5,7 @@
  */
 package com.dae.practica1.servicios;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import java.util.*;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -39,6 +40,7 @@ public class Evento {
 
     @ManyToOne
     @JoinColumn(name = "creador")
+    @JsonBackReference
     private Usuario creador;
 
     @ManyToMany(mappedBy = "eventosInscritos")
@@ -229,6 +231,11 @@ public class Evento {
     public void setListaEspera(Set< Usuario> listaEspera) {
         this.listaEspera = listaEspera;
     }
+    
+    public int tamListaEspera(){
+        return listaEspera.size();
+    }
+    
 
     /**
      * @return the creador

@@ -5,12 +5,10 @@
  */
 package com.dae.practica1.servicios;
 
-import com.dae.practica1.servicios.Evento;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+
 import java.util.Set;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestBody;
 
 
 /**
@@ -20,20 +18,16 @@ import org.springframework.stereotype.Component;
 @Component("usuarioService")
 public interface UsuarioService {
     
-    public void RegistraUsuario(String usuario, String password, String nombre, Date fNac)throws UsuarioNoCreadoException;
+    public void RegistraUsuario(@RequestBody UsuarioDTO usuario)throws UsuarioNoCreadoException;
     
-    public int IdentificaUsuario(String usuario, String password);
+    public Set<EventoDTO> ListaEventosInscritos(String usuario);
     
-    public Set<Evento> ListaEventosInscritos(int token);
-    
-    public Set<Evento> ListaEventosCreados(int token );
+    public Set<EventoDTO> ListaEventosCreados(String usuario );
     
     public Usuario devuelveUsuario(String usuario);
     
-    public Set<Evento> ListaEventosEnEspera(int token);
+    public Set<EventoDTO> ListaEventosEnEspera(String usuario);
     
-    public boolean comprobarToken(int token);
-    
-    public Usuario devuelveUsuario(int token);
+    public Usuario devuelveUsuario(int idUsuario);
     
 }

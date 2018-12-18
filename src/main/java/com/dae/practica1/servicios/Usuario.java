@@ -5,6 +5,7 @@
  */
 package com.dae.practica1.servicios;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -42,6 +43,7 @@ public class Usuario implements Comparable<Usuario> {
 
     @OneToMany(mappedBy = "creador")
     @LazyCollection(LazyCollectionOption.FALSE)
+    @JsonManagedReference
     private Set<Evento> eventosCreados;
 
     @ManyToMany

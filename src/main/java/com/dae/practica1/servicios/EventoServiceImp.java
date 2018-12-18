@@ -5,24 +5,34 @@
  */
 package com.dae.practica1.servicios;
 
-import java.util.Date;
+
 import java.util.List;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  *
  * @author macosx
  */
 @Component
+@RestController
+@RequestMapping("/")
 public class EventoServiceImp implements EventoService {
 
-    private Map<String, Evento> eventos;
-    private List<List<String>> tiposEvento;//pos 0= charla, pos 1 =curso,pos 2= actividad deportiva, pos 3=visita cultiral.
     private int idEvento = 0;
-
+    private Set<Integer> idsCreados;
     @Autowired
     private UsuarioService usuarios;
 
@@ -30,28 +40,53 @@ public class EventoServiceImp implements EventoService {
     private EventoDAO eventoDAO;
 
     public EventoServiceImp() {
-        eventos = new TreeMap<>();
-        tiposEvento = new ArrayList<>(4);
-        for (int i = 0; i < 4; ++i) {
-            tiposEvento.add(new ArrayList<>());
-        }
-        tiposEvento.get(0).add("Micasa");
+        idsCreados = new TreeSet<>();
+    }
+
+    private int GenerarIdEvento() {
+        int token = -1;
+        Random random = new Random();
+        do {
+            token = random.nextInt(899999) + 100000;
+        } while (idsCreados.contains(token));
+        idsCreados.add(token);
+        return token;
+    }
+
+    private EventoDTO cambioBOtoDTO(Evento e) {
+        return new EventoDTO(e.getIdEvento(), e.getTitulo(), e.getLugar(), e.getTipo(), e.getDescripcion(), e.getFecha(), e.getAforo(), e.getCreador().getUsuario(), e.tamListaInscritos(), e.tamListaEspera());
     }
 
     @Override
-    public List<Evento> BuscaEvento(String cadena) {
-        return eventoDAO.BuscaEvento(cadena);
+    @RequestMapping(value = "eventos/{cadena}", method = GET, produces = "application/json")
+    public List<EventoDTO> BuscaEvento(@PathVariable("cadena") String cadena) {
+        List<EventoDTO> lista = new ArrayList<>();
+        List<Evento> lEvento = eventoDAO.BuscaEvento(cadena);
+        for (Evento e : lEvento) {
+            lista.add(cambioBOtoDTO(e));
+        }
+        return lista;
     }
 
     @Override
-    public void CreaEvento(String titulo, String lugar, Date fecha, String tipo, String descripcion, int aforo, int token) throws EventoNoCreadoException {
-        Usuario u = usuarios.devuelveUsuario(token);
-        if (idEvento == 0) {
-            idEvento = eventoDAO.ultimoID();
+    @RequestMapping(value = "/evento/{usuario}", method = POST, consumes = "application/json")
+    public void CreaEvento(@RequestBody EventoDTO e, @PathVariable("usuario") String usuario) throws EventoNoCreadoException {
+
+        if (e == null) {
+            throw new EventoNoCreadoException();
         }
-        Evento e = new Evento(++idEvento, titulo, lugar, tipo, descripcion, fecha, aforo, u);
-        if (usuarios.comprobarToken(token)) {
-            eventoDAO.CreaEvento(e,token);   
+        if (eventoDAO.BuscaTitulo(e.getTitulo()) != null) {
+            throw new EventoNoCreadoException();
+        }
+        Usuario u = usuarios.devuelveUsuario(usuario);
+
+        UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (u != null && u.getUsuario().equals(user.getUsername())) {
+            if (idEvento == 0) {
+                idEvento = GenerarIdEvento();
+            }
+            Evento evento = new Evento(idEvento, e.getTitulo(), e.getLugar(), e.getTipo(), e.getDescripcion(), e.getFecha(), e.getAforo(), u);
+            eventoDAO.CreaEvento(evento, u.getIdUsuario());
         } else {
             throw new EventoNoCreadoException();
         }
@@ -59,40 +94,61 @@ public class EventoServiceImp implements EventoService {
     }
 
     @Override
-    public void BorraEvento(String titulo, int token) throws EventoNoEncontradoException {
+    @RequestMapping(value = "/usuarios/{usuario}/eventos/{titulo}", method = DELETE)
+    public void BorraEvento(@PathVariable("titulo") String titulo, @PathVariable("usuario") String usuario) throws EventoNoEncontradoException {
+
+        Usuario u = usuarios.devuelveUsuario(usuario);
         Evento e = eventoDAO.BuscaTitulo(titulo);
-        if (usuarios.comprobarToken(token)) {
-            eventoDAO.BorraEvento(e);
-        } else {
-            throw new EventoNoEncontradoException();
+        if (u != null && u.getUsuario().equals(e.getCreador().getUsuario())) {
+            try {
+                eventoDAO.BorraEvento(e);
+            } catch (Exception ex) {
+                throw new EventoNoEncontradoException();
+            }
         }
     }
 
     @Override
-    public boolean InscribeUsuario(Usuario usuario, String titulo) {
-
+    @RequestMapping(value = "/eventos/{titulo}/{usuario}", method = PUT)
+    public boolean InscribeUsuario(@PathVariable("titulo") String titulo, @PathVariable("usuario") String usuario) {
         Evento e = eventoDAO.BuscaTitulo(titulo);
-        if (e.getAforo() == e.tamListaInscritos()) {
-            eventoDAO.anadirListaEspera(e.getIdEvento(), usuario.getIdUsuario());
-            return false;
+        Usuario u = usuarios.devuelveUsuario(usuario);
+
+        if (u != null ) {
+            if (e.getAforo() == e.tamListaInscritos()) {
+                eventoDAO.anadirListaEspera(e.getIdEvento(), u.getIdUsuario());
+                return false;
+            } else {
+                eventoDAO.anadirInscritos(e.getIdEvento(), u.getIdUsuario());
+                return true;
+            }
         }
-        e.inscribirUsuario(usuario);
-        return true;
+        return false;
 
     }
 
     @Override
-    public void CancelaUsuario(String titulo, int token) {
-        Evento e =eventoDAO.BuscaTitulo(titulo);
-        if (usuarios.comprobarToken(token)) {
-            eventoDAO.cancelaUsuario(e.getIdEvento(), token);
+    @RequestMapping(value = "/eventos/{titulo}/usuarios/{usuario}", method = PUT)
+    public void CancelaUsuario(@PathVariable("titulo") String titulo, @PathVariable("usuario") String usuario) {
+        Evento e = eventoDAO.BuscaTitulo(titulo);
+        Usuario u = usuarios.devuelveUsuario(usuario);
 
+        if (u != null ) {
+            eventoDAO.cancelaUsuario(e.getIdEvento(), u.getIdUsuario());
         }
     }
 
     @Override
-    public List<Evento> eventosCreados() {
-        return eventoDAO.eventosCreados();
+    @CrossOrigin
+    @RequestMapping(value = "/eventos", method = GET, produces = "application/json")
+    public List<EventoDTO> eventosCreados() {
+        List<EventoDTO> lista = new ArrayList<>();
+        List<Evento> lEvento = eventoDAO.eventosCreados();
+        for (Evento e : lEvento) {
+            lista.add(cambioBOtoDTO(e));
+        }
+
+        return lista;
     }
 
 }

@@ -12,6 +12,7 @@ import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import static java.lang.Math.toIntExact;
+import javax.persistence.NoResultException;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Propagation;
 
@@ -21,7 +22,6 @@ import org.springframework.transaction.annotation.Propagation;
  */
 @Repository
 @Transactional(propagation = Propagation.SUPPORTS)
-
 public class EventoDAO {
 
     @PersistenceContext
@@ -32,13 +32,14 @@ public class EventoDAO {
     }
 
     @Transactional
-    public void CreaEvento(Evento e, int token) {
-        Usuario u = em.find(Usuario.class, token);
+    public void CreaEvento(Evento e, int idUsuario) {
+        Usuario u = em.find(Usuario.class, idUsuario);
         e.inscribirUsuario(u);
         em.persist(e);
     }
 
     @Transactional(readOnly = true)
+
     public List<Evento> eventosCreados() {
         List<Evento> eventosCreados = em.createQuery(
                 "select e from Evento e",
@@ -46,43 +47,43 @@ public class EventoDAO {
         return eventosCreados;
     }
 
-
     public List<Evento> BuscaEvento(String cadena) {
         List<Evento> eventosTipo = em.createQuery(
-                "select e from Evento e WHERE e.tipo=?1 OR e.titulo LIKE '%?1%' OR e.descripcion LIKE '%?1%'",
-                Evento.class).setParameter(1, cadena).getResultList();
+                "select e from Evento e WHERE e.tipo=?1 OR e.titulo LIKE ?2 OR e.descripcion LIKE ?2",
+                Evento.class).setParameter(1, cadena).setParameter(2, "%" + cadena + "%")
+                .getResultList();
         return eventosTipo;
     }
 
-    @Cacheable(value="eventosTitulo")
+    @Cacheable(value = "eventosTitulo")
     public Evento BuscaTitulo(String cadena) {
-        Evento e = em.createQuery(
-                "select e from Evento e WHERE  e.titulo=?1",
-                Evento.class).setParameter(1, cadena).getSingleResult();
+        Evento e;
+        try {
+            e = em.createQuery(
+                    "select e from Evento e WHERE  e.titulo=?1",
+                    Evento.class).setParameter(1, cadena).getSingleResult();
+        } catch (NoResultException ex) {
+            e = null;
+        }
         return e;
     }
 
-    public int ultimoID() {
-        int id = toIntExact((long) em.createQuery("Select COUNT(e.idEvento) From Evento e").getSingleResult());
-        return id;
-    }
 
-    @Transactional(propagation = Propagation.REQUIRED,
-            rollbackFor = EventoNoCreadoException.class)
+
+    @Transactional
     public void anadirInscritos(int idEvento, int idUsuario) {
-        em.getTransaction().begin();
+        
         Usuario u = em.find(Usuario.class, idUsuario);
         Evento e = em.find(Evento.class, idEvento);
-        u.anadirEventoInscrito(e);
         e.inscribirUsuario(u);
+        em.merge(u);
         em.merge(e);
-     
-        
+
     }
 
     @Transactional
     public void anadirListaEspera(int idEvento, int idUsuario) {
-         em.getTransaction().begin();
+       
         Usuario u = em.find(Usuario.class, idUsuario);
         Evento e = em.find(Evento.class, idEvento);
         e.anadirListaEspera(u);
@@ -95,11 +96,11 @@ public class EventoDAO {
         Usuario creador = e.getCreador();
         creador.eliminarEvento(e);
         em.merge(creador);
-        for(Usuario u :e.getUsuariosInscritos()){
+        for (Usuario u : e.getUsuariosInscritos()) {
             u.eliminarEvento(e);
             em.merge(u);
         }
-        for(Usuario u :e.getListaEspera()){
+        for (Usuario u : e.getListaEspera()) {
             u.eliminarEvento(e);
             em.merge(u);
         }
@@ -108,7 +109,7 @@ public class EventoDAO {
     }
 
     @Transactional
-    public void cancelaUsuario(int idEvento,int idUsuario){
+    public void cancelaUsuario(int idEvento, int idUsuario) {
         Usuario u = em.find(Usuario.class, idUsuario);
         Evento e = em.find(Evento.class, idEvento);
         e.borraUsusario(u);
@@ -116,5 +117,5 @@ public class EventoDAO {
         em.merge(e);
         em.merge(u);
     }
-    
+
 }

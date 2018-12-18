@@ -9,6 +9,10 @@ import java.util.List;
 import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,18 +44,20 @@ public class UsuarioDAO {
     }
 
     @Transactional(readOnly = true)
-    public Set<Evento> EventosInscritos(int token) {
-        return em.find(Usuario.class, token).getEventosInscritos();
+    public Set<Evento> EventosInscritos(int idUsuario) {
+        return em.find(Usuario.class, idUsuario).getEventosInscritos();
     }
 
     @Transactional(readOnly = true)
-    public Set<Evento> EventosEsperando(int token) {
-        return em.find(Usuario.class, token).getEventosEsperando();
+    public Set<Evento> EventosEsperando(int idUsuario) {
+        return em.find(Usuario.class, idUsuario).getEventosEsperando();
     }
 
     @Transactional(readOnly = true)
-    public Set<Evento> EventosCreados(int token) {
-        return em.find(Usuario.class, token).getEventosCreados();
+    public Set<Evento> EventosCreados(int idUsuario) {
+        return em.find(Usuario.class, idUsuario).getEventosCreados();
     }
+
+
 
 }

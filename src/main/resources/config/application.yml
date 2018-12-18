@@ -4,7 +4,10 @@ spring.datasource.driver-class-name: org.apache.derby.jdbc.ClientDriver
 spring.datasource.url: jdbc:derby://localhost:1527/dae
 spring.datasource.username: dae
 spring.datasource.password: dae
+spring.datasource.suppressclose: true
 spring.datasource.tomcat.max-active: 50
+
+
 
 spring.jpa.hibernate.ddl-auto: update
 
